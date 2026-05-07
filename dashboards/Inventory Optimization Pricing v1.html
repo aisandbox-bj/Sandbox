@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Birchwood Advisory · Inventory Optimization · Pricing Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bw-midnight:#081E2B; --bw-deep-navy:#0C2D3B; --bw-dark-teal:#164049;
+  --bw-mid-teal:#2F635F; --bw-teal:#356A71;
+  --bw-cyan:#1FCED8; --bw-cyan-glow:#4FC2D7; --bw-aqua:#86D6CF; --bw-aqua-light:#ABEFEB;
+  --bw-green:#5AB69D;
+  --bw-white:#F0F4F3; --bw-grey-100:#D6DFDE; --bw-grey-200:#9BABA8; --bw-grey-300:#5C7270;
+  --bw-status-ok:#34D399; --bw-status-warn:#FBBF24; --bw-status-crit:#EF4444;
+  --bw-wr:#7B2D8B;
+  --font-display:'Barlow Condensed',sans-serif;
+  --font-heading:'Rajdhani',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;color:var(--bw-grey-100);font-family:var(--font-body);font-weight:400;line-height:1.5}
+body{display:flex;flex-direction:column;align-items:center;padding:32px 0;gap:24px}
+
+.slide{
+  position:relative;width:1280px;height:720px;
+  background:var(--bw-midnight);color:var(--bw-grey-100);
+  overflow:hidden;page-break-after:always;break-after:page;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.slide .pagenum{position:absolute;right:36px;bottom:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase}
+.slide .brandtag{position:absolute;left:36px;bottom:24px;font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase}
+
+.h1{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:3px;line-height:1.05;color:var(--bw-white)}
+.h2{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:2px;line-height:1.1;color:var(--bw-white)}
+.eyebrow{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--bw-cyan)}
+.label{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--bw-grey-200)}
+.muted{color:var(--bw-grey-200)}
+.cyan{color:var(--bw-cyan)}
+.green{color:var(--bw-green)}
+.amber{color:var(--bw-status-warn)}
+.crit{color:var(--bw-status-crit)}
+.mono{font-family:var(--font-mono)}
+
+.titlebar{position:absolute;left:60px;top:48px;right:60px}
+.titlebar .h2{font-size:30px}
+.titlebar .accent{width:64px;height:2px;background:var(--bw-cyan);opacity:.45;margin-top:14px}
+.content{position:absolute;left:60px;right:60px;top:140px;bottom:80px}
+
+/* SLIDE 1 — TITLE */
+.s-title{background:var(--bw-midnight);position:relative}
+.s-title::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 70% 35%, rgba(31,206,216,.10), transparent 60%);pointer-events:none}
+.s-title .wrap{position:absolute;left:90px;right:90px;top:160px}
+.s-title .pre{font-family:var(--font-mono);color:var(--bw-cyan);letter-spacing:3px;font-size:13px;text-transform:uppercase;margin-bottom:18px}
+.s-title h1{font-size:96px;letter-spacing:5px;line-height:.95}
+.s-title .sub{font-family:var(--font-heading);font-weight:500;color:var(--bw-cyan);font-size:26px;letter-spacing:1px;margin-top:22px;line-height:1.3}
+.s-title .divider{width:120px;height:2px;background:var(--bw-cyan);margin:34px 0;opacity:.7}
+.s-title .meta{font-family:var(--font-mono);font-size:13px;letter-spacing:2px;color:var(--bw-grey-200);text-transform:uppercase}
+.s-title .meta strong{color:var(--bw-white);font-weight:500}
+
+/* common — dense layout primitives */
+.lead{font-family:var(--font-body);font-size:15px;color:var(--bw-grey-100);line-height:1.55;max-width:1100px}
+.lead em{font-style:normal;color:var(--bw-cyan)}
+
+/* market shapes — three columns */
+.shapes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:24px}
+.shape{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);border-top:3px solid var(--bw-cyan);padding:20px 22px}
+.shape h4{font-family:var(--font-display);font-size:20px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;line-height:1.15;margin-bottom:6px}
+.shape .sub{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;color:var(--bw-cyan);text-transform:uppercase;margin-bottom:12px;display:block}
+.shape p{font-family:var(--font-body);font-size:13px;line-height:1.55;color:var(--bw-grey-100);margin-bottom:10px}
+.shape .vendors{font-family:var(--font-mono);font-size:11px;color:var(--bw-grey-200);line-height:1.55;letter-spacing:.3px}
+.shape .price{font-family:var(--font-mono);font-size:12px;color:var(--bw-cyan);margin-top:10px;border-top:1px solid rgba(155,171,168,.10);padding-top:10px;letter-spacing:.5px}
+.shape.b{border-top-color:var(--bw-status-warn)}
+.shape.c{border-top-color:var(--bw-green)}
+.gap-callout{margin-top:22px;background:var(--bw-deep-navy);border-left:3px solid var(--bw-cyan);padding:16px 22px;font-family:var(--font-body);font-size:14px;line-height:1.55;color:var(--bw-grey-100)}
+.gap-callout strong{color:var(--bw-cyan);font-family:var(--font-mono);text-transform:uppercase;font-size:11px;letter-spacing:1.5px;display:block;margin-bottom:6px}
+
+/* models 2x2 grid */
+.models{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+.model{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:18px 22px;display:grid;grid-template-columns:auto 1fr;column-gap:16px;row-gap:6px;align-items:start}
+.model .num{font-family:var(--font-display);font-size:38px;color:var(--bw-cyan);font-weight:700;letter-spacing:1px;line-height:1;grid-row:span 3}
+.model h5{font-family:var(--font-display);font-size:20px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;line-height:1.15}
+.model p{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);line-height:1.5}
+.model .ex{font-family:var(--font-mono);font-size:10.5px;color:var(--bw-grey-200);letter-spacing:.3px}
+.model.bw{border-color:rgba(31,206,216,.45);background:linear-gradient(to bottom, rgba(31,206,216,.05), var(--bw-deep-navy))}
+
+/* reference pricing table */
+.reftbl{width:100%;border-collapse:collapse;font-family:var(--font-body);font-size:13px;margin-top:8px}
+.reftbl th{background:var(--bw-dark-teal);color:var(--bw-grey-200);padding:9px 12px;text-align:left;font-family:var(--font-mono);font-weight:500;letter-spacing:1.2px;text-transform:uppercase;font-size:10.5px;border-bottom:1px solid rgba(31,206,216,.18)}
+.reftbl td{background:var(--bw-deep-navy);padding:9px 12px;border-bottom:1px solid rgba(155,171,168,.05);color:var(--bw-grey-100);line-height:1.45;vertical-align:top}
+.reftbl tr:nth-child(even) td{background:#091F2D}
+.reftbl td.price{font-family:var(--font-mono);color:var(--bw-cyan);font-size:12.5px;letter-spacing:.3px;white-space:nowrap}
+.reftbl td.what{font-family:var(--font-body);font-weight:500;color:var(--bw-white)}
+.reftbl td.tier{font-family:var(--font-mono);font-size:11px;color:var(--bw-grey-200);letter-spacing:.4px}
+.reftbl td.src{font-family:var(--font-mono);font-size:10.5px;color:var(--bw-grey-200);letter-spacing:.3px}
+.reftbl .marker{display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;margin-left:6px;border:1px solid currentColor}
+.reftbl .marker.direct{color:var(--bw-status-ok)}
+.reftbl .marker.inferred{color:var(--bw-status-warn)}
+.note{font-family:var(--font-mono);font-size:10.5px;color:var(--bw-grey-200);letter-spacing:.5px;line-height:1.55;margin-top:12px}
+.note .key{color:var(--bw-status-ok)}
+.note .key2{color:var(--bw-status-warn)}
+
+/* value side — vendor strip + cases */
+.value-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:24px;margin-top:6px;align-items:start}
+.headline-stat{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.18);padding:18px 22px;margin-bottom:14px}
+.headline-stat .lab{font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase;display:block;margin-bottom:6px}
+.headline-stat .v{font-family:var(--font-display);font-size:42px;color:var(--bw-cyan);letter-spacing:1px;font-weight:700;line-height:1.05}
+.headline-stat .v .smaller{font-size:24px;color:var(--bw-grey-200);letter-spacing:.5px;margin-left:4px}
+.headline-stat .desc{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);line-height:1.5;margin-top:8px}
+.vendor-strip{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:14px 18px}
+.vendor-strip .lab{font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase;display:block;margin-bottom:8px}
+.vendor-strip .row{display:grid;grid-template-columns:130px 1fr;gap:12px;padding:5px 0;font-size:12.5px;line-height:1.45;border-bottom:1px solid rgba(155,171,168,.06)}
+.vendor-strip .row:last-child{border-bottom:none}
+.vendor-strip .vn{font-family:var(--font-mono);color:var(--bw-cyan);font-size:11px;letter-spacing:.3px}
+.vendor-strip .vc{font-family:var(--font-body);color:var(--bw-grey-100)}
+
+.cases{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:18px 20px}
+.cases .lab{font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase;display:block;margin-bottom:10px}
+.cases .case{padding:10px 0;border-bottom:1px solid rgba(155,171,168,.08)}
+.cases .case:last-child{border-bottom:none}
+.cases .nm{font-family:var(--font-display);font-size:14px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.2px;font-weight:600}
+.cases .vn{font-family:var(--font-mono);font-size:11px;color:var(--bw-cyan);margin-top:3px;letter-spacing:.3px}
+.cases .desc{font-family:var(--font-body);font-size:12.5px;color:var(--bw-grey-100);margin-top:4px;line-height:1.45}
+.implication{margin-top:14px;background:var(--bw-deep-navy);border-left:3px solid var(--bw-green);padding:14px 18px;font-family:var(--font-body);font-size:13.5px;line-height:1.55;color:var(--bw-grey-100)}
+.implication strong{color:var(--bw-green);font-family:var(--font-mono);text-transform:uppercase;font-size:11px;letter-spacing:1.5px;display:block;margin-bottom:4px}
+
+/* positioning slide */
+.pos-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+.pos-card{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:20px 22px}
+.pos-card.give{border-top:3px solid var(--bw-status-warn)}
+.pos-card.get{border-top:3px solid var(--bw-cyan)}
+.pos-card h4{font-family:var(--font-display);font-size:20px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:12px}
+.pos-card ul{list-style:none}
+.pos-card li{font-family:var(--font-body);font-size:13px;line-height:1.55;color:var(--bw-grey-100);padding:6px 0 6px 16px;position:relative;border-bottom:1px solid rgba(155,171,168,.06)}
+.pos-card li:last-child{border-bottom:none}
+.pos-card li::before{content:"";position:absolute;left:0;top:13px;width:6px;height:6px;background:var(--bw-cyan)}
+.pos-card.give li::before{background:var(--bw-status-warn)}
+.pos-card li strong{color:var(--bw-cyan);display:block;font-family:var(--font-display);font-size:14px;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px}
+.pos-card.give li strong{color:var(--bw-status-warn)}
+.cost-build{margin-top:22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.cost-build .step{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:14px 16px;text-align:left}
+.cost-build .lab{font-family:var(--font-mono);font-size:10px;letter-spacing:1.3px;color:var(--bw-grey-200);text-transform:uppercase;display:block;margin-bottom:6px}
+.cost-build .v{font-family:var(--font-display);font-size:24px;color:var(--bw-cyan);font-weight:700;letter-spacing:1px;line-height:1}
+.cost-build .desc{font-family:var(--font-body);font-size:11.5px;color:var(--bw-grey-100);margin-top:6px;line-height:1.4}
+.cost-build .arrow{align-self:center;text-align:center;font-family:var(--font-mono);color:var(--bw-cyan);font-size:18px}
+
+/* recommended pricing tables */
+.rec-tbl{width:100%;border-collapse:collapse;font-family:var(--font-body);font-size:13px;margin-top:6px}
+.rec-tbl th{background:var(--bw-dark-teal);color:var(--bw-grey-200);padding:10px 14px;text-align:left;font-family:var(--font-mono);font-weight:500;letter-spacing:1.2px;text-transform:uppercase;font-size:10.5px;border-bottom:1px solid rgba(31,206,216,.18)}
+.rec-tbl td{background:var(--bw-deep-navy);padding:11px 14px;border-bottom:1px solid rgba(155,171,168,.06);color:var(--bw-grey-100);line-height:1.5;vertical-align:top}
+.rec-tbl tr:nth-child(even) td{background:#091F2D}
+.rec-tbl tr.flag td{background:rgba(31,206,216,.06);border-left:2px solid var(--bw-cyan)}
+.rec-tbl tr.flag td:first-child{font-weight:600;color:var(--bw-white)}
+.rec-tbl td.shape{font-family:var(--font-display);font-size:14px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1px;font-weight:600;line-height:1.25}
+.rec-tbl td.shape .sublab{display:block;font-family:var(--font-mono);font-size:10px;color:var(--bw-grey-200);letter-spacing:.5px;text-transform:none;font-weight:400;margin-top:2px}
+.rec-tbl td.price{font-family:var(--font-mono);color:var(--bw-cyan);font-size:13.5px;font-weight:500;letter-spacing:.3px;white-space:nowrap}
+.rec-tbl td.basis{font-family:var(--font-body);font-size:12.5px;color:var(--bw-grey-100);line-height:1.5}
+.rec-foot{margin-top:18px;background:var(--bw-deep-navy);border-left:3px solid var(--bw-cyan);padding:14px 20px;font-family:var(--font-body);font-size:13.5px;line-height:1.55;color:var(--bw-grey-100)}
+.rec-foot strong{color:var(--bw-cyan);font-family:var(--font-mono);text-transform:uppercase;font-size:11px;letter-spacing:1.5px;display:block;margin-bottom:4px}
+.rec-foot .big{font-family:var(--font-display);color:var(--bw-cyan);font-size:18px;letter-spacing:1px}
+
+/* gainshare + close */
+.gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:6px;align-items:start}
+.gs-card{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:22px 24px}
+.gs-card h4{font-family:var(--font-display);font-size:22px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:10px}
+.gs-card .struct{margin:14px 0}
+.gs-card .struct .yr{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid rgba(155,171,168,.08)}
+.gs-card .struct .yr:last-child{border-bottom:none}
+.gs-card .struct .ylab{font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;color:var(--bw-cyan);text-transform:uppercase;width:78px;flex-shrink:0;padding-top:3px}
+.gs-card .struct .ydesc{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);line-height:1.5}
+.gs-card .struct .ydesc .v{color:var(--bw-cyan);font-weight:600;font-family:var(--font-mono)}
+.gs-card .precedent{margin-top:14px;font-family:var(--font-body);font-size:12.5px;color:var(--bw-grey-100);line-height:1.55}
+.gs-card .precedent .ven{font-family:var(--font-mono);color:var(--bw-cyan);font-size:11px;letter-spacing:.3px}
+
+.summary{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:22px 24px}
+.summary h4{font-family:var(--font-display);font-size:22px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:14px}
+.summary .row-line{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(155,171,168,.10)}
+.summary .row-line:last-child{border-bottom:none}
+.summary .lab2{font-family:var(--font-mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bw-grey-200);min-width:160px;padding-top:3px;flex-shrink:0}
+.summary .lab2.crit-l{color:var(--bw-status-crit)}
+.summary .lab2.ok-l{color:var(--bw-status-ok)}
+.summary .lab2.cyan-l{color:var(--bw-cyan)}
+.summary .v{font-family:var(--font-body);font-size:13.5px;color:var(--bw-grey-100);line-height:1.5}
+.summary .v strong{color:var(--bw-white);font-weight:600}
+
+/* print */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{background:#000}
+  body{padding:0;gap:0}
+  .slide{box-shadow:none;margin:0}
+  .nav-help{display:none}
+}
+.nav-help{
+  position:fixed;right:14px;bottom:14px;
+  background:rgba(8,30,43,.94);border:1px solid rgba(31,206,216,.25);
+  color:var(--bw-grey-200);padding:8px 12px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;z-index:1000;
+}
+.nav-help span{color:var(--bw-cyan)}
+</style>
+</head>
+<body>
+
+<!-- ============== SLIDE 1 — TITLE ============== -->
+<section class="slide s-title">
+  <div class="wrap">
+    <div class="pre">Pricing model · Reference benchmarks · Recommended approach</div>
+    <h1 class="h1">Pricing<br/>The Service</h1>
+    <div class="sub">How the market prices MRO inventory<br/>optimization — and where Birchwood sits.</div>
+    <div class="divider"></div>
+    <div class="meta"><strong>Internal Pricing Review</strong> &nbsp;·&nbsp; Birchwood Advisory · Mobile Mining Equipment & Technology Advisory</div>
+  </div>
+  <div class="brandtag">Birchwood Advisory</div>
+  <div class="pagenum">01 / 09</div>
+</section>
+
+<!-- ============== SLIDE 2 — MARKET LANDSCAPE ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">The market</div>
+    <h2 class="h2" style="margin-top:6px">Three competing markets — none of them is the right shape for what we sell.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <p class="lead">Three distinct categories chase the same problem with different economics. Birchwood's positioning gap sits between them — too service-heavy for SaaS comparison, too lean and SAP-specific for MBB transformation programs.</p>
+    <div class="shapes">
+      <div class="shape">
+        <span class="sub">Category 01</span>
+        <h4>Enterprise SaaS<br/>+ embedded analyst</h4>
+        <p>Multi-year subscriptions, direct API into SAP/Oracle/Maximo, continuous algorithmic refresh + customer success manager. Months of integration, IT politics built-in.</p>
+        <div class="vendors">IBM Maximo IO (ex-Oniqua) · Verusen · ToolsGroup · Slimstock · GAINS · Servigistics/PTC · Syncron · SAP IBP · Kinaxis · o9 · Blue Yonder</div>
+        <div class="price">~$30K – $5M+ ACV</div>
+      </div>
+      <div class="shape b">
+        <span class="sub" style="color:var(--bw-status-warn)">Category 02</span>
+        <h4>Strategy &amp; ops<br/>consulting (MBB / Big-4)</h4>
+        <p>Episodic project work, day-rate teams, occasional gain-share. Mining practices with bespoke tooling (MineLens, MineSpans, BCG X). Big-team transformation footprint.</p>
+        <div class="vendors">McKinsey RTS · BCG · Bain · Deloitte · EY · KPMG · Accenture (incl. PiP) · dss+</div>
+        <div class="price" style="color:var(--bw-status-warn)">$300K – $2M+ per diagnostic</div>
+      </div>
+      <div class="shape c">
+        <span class="sub" style="color:var(--bw-green)">Category 03</span>
+        <h4>Mining-specialist<br/>technical consultancies</h4>
+        <p>T&amp;M day rates anchored to engineering norms. Strong on geotech, EPCM, reliability — light on MRP/inventory specifically. Stratflow is the lone TOC-led mining boutique.</p>
+        <div class="vendors">SRK · Hatch · Worley · GHD · Turner &amp; Townsend · Stratflow</div>
+        <div class="price" style="color:var(--bw-green)">$50K project → many M EPCM</div>
+      </div>
+    </div>
+    <div class="gap-callout">
+      <strong>Birchwood's positioning gap</strong>
+      Service not software · manual SAP exports not API · fleet-by-fleet not enterprise-wide · transparent methodology not black-box AI · senior-operator review at four explicit gates. Closest functional twin: <span class="cyan">Innova SiMPL</span> (SAP-native add-on, software). Closest delivery shape: <span class="cyan">Stratflow</span> (mining-only boutique, ~$50K engagement scale).
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">02 / 09</div>
+</section>
+
+<!-- ============== SLIDE 3 — PRICING MODELS ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">How the market prices</div>
+    <h2 class="h2" style="margin-top:6px">Four pricing structures in play. We use two — and a third optionally.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="models">
+      <div class="model bw">
+        <div class="num">01</div>
+        <h5>Subscription / SaaS</h5>
+        <p style="grid-column:2">Flat annual fee, priced by plants / systems / inventory value. Predictable revenue, software-led, requires integration. Software maintenance norm: <span class="cyan">15–20% of license</span> per year (Forrester).</p>
+        <div class="ex" style="grid-column:2">IBM Maximo IO · Verusen · ToolsGroup · Slimstock · Syncron · SAP IBP</div>
+      </div>
+      <div class="model bw">
+        <div class="num">02</div>
+        <h5>Fixed-fee project</h5>
+        <p style="grid-column:2">Scoped one-time engagement, milestone payments. Most consulting work. Sustain phase often priced separately. <span class="cyan">Birchwood's per-fleet sprint fits here.</span></p>
+        <div class="ex" style="grid-column:2">McKinsey · BCG · Big-4 diagnostics · Stratflow</div>
+      </div>
+      <div class="model">
+        <div class="num">03</div>
+        <h5>T&amp;M day rates</h5>
+        <p style="grid-column:2">Bill by consultant-day. Engineering / EPCM norm. Big-4 G-Cloud rates: SM <span class="cyan">£1,706–£2,120</span>, Partner <span class="cyan">£2,500–£3,800</span>. Mining-specialist senior <span class="cyan">$1,500–$2,500/day</span> (inferred).</p>
+        <div class="ex" style="grid-column:2">SRK · Hatch · Worley · all engineering specialists</div>
+      </div>
+      <div class="model bw">
+        <div class="num">04</div>
+        <h5>Gain-share / contingent</h5>
+        <p style="grid-column:2">Base fee + % of validated savings. Procurement norm: <span class="cyan">20–40%</span> of validated savings, often tapered (Spend Matters). Specific splits never publicly disclosed. <span class="cyan">Optional layer on Birchwood recurring.</span></p>
+        <div class="ex" style="grid-column:2">Partners in Performance (heritage) · Stratflow (partial fee-at-risk) · McKinsey RTS results-oriented</div>
+      </div>
+    </div>
+    <div class="gap-callout" style="margin-top:18px">
+      <strong>What Birchwood uses</strong>
+      A <span class="cyan">fixed-fee per-fleet sprint</span> as the baseline shape · a <span class="cyan">recurring service retainer</span> for ongoing optimization · an optional <span class="cyan">gain-share variant</span> on the recurring layer for sophisticated clients with verifiable working-capital outcomes.
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">03 / 09</div>
+</section>
+
+<!-- ============== SLIDE 4 — REFERENCE PRICING ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Reference pricing — what's actually public</div>
+    <h2 class="h2" style="margin-top:6px">Almost no one publishes mining MRO IO pricing. These are the rare anchors.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <table class="reftbl">
+      <thead>
+        <tr><th style="width:18%">Anchor</th><th style="width:22%">What it is</th><th style="width:30%">Tier / context</th><th style="width:18%">Source</th><th style="width:12%">Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="price">$3,094 / mo  ·  ~$37K / yr</td>
+          <td class="what">IBM Maximo Inventory Optimization Essentials</td>
+          <td class="tier">≤ $50M inventory tier · most-relevant SaaS floor for our market</td>
+          <td class="src">IBM (published)</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">$695 → $10,000 / mo</td>
+          <td class="what">Smart IP&amp;O (Epicor) — tiered SaaS</td>
+          <td class="tier">$695 entry; $2K / $5K / $10K tiers · general MRO/spares</td>
+          <td class="src">Aggregator</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">~$12,500 / mo</td>
+          <td class="what">Syncron Parts Planning</td>
+          <td class="tier">OEM aftermarket pedigree (JCB, Volvo CE, Mazda)</td>
+          <td class="src">SoftwareAdvice</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">$29,364 / yr → $297,843 / 3mo</td>
+          <td class="what">SAP IBP for Inventory</td>
+          <td class="tier">SelectHub entry → SpotSaaS enterprise tier · Roy Hill named</td>
+          <td class="src">SelectHub / SpotSaaS</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">£1,706 – £3,800 / day</td>
+          <td class="what">Big-4 — Senior Manager → Partner</td>
+          <td class="tier">EY £2,120 SM → £3,800 Partner; Deloitte £1,706 SM; Accenture £2,240 Partner</td>
+          <td class="src">UK G-Cloud</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">~$218 / hr</td>
+          <td class="what">Accenture BPR Specialist III</td>
+          <td class="tier">US GSA schedule rate</td>
+          <td class="src">US GSA</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">$1.78M / 8 weeks</td>
+          <td class="what">BCG procurement engagement</td>
+          <td class="tier">Puerto Rico government — rare full-project disclosure</td>
+          <td class="src">Slideworks</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">~$50K / engagement</td>
+          <td class="what">Stratflow Lesotho diamond mine</td>
+          <td class="tier">Mining-only boutique · TOC method · partial fee-at-risk</td>
+          <td class="src">Stratflow</td>
+          <td><span class="marker direct">DIRECT</span></td>
+        </tr>
+        <tr>
+          <td class="price">$8K – $12K / day</td>
+          <td class="what">MBB partner day rate</td>
+          <td class="tier">Widely cited, never directly published · proxied by partner comp ~$938K/yr</td>
+          <td class="src">Industry reports</td>
+          <td><span class="marker inferred">INFERRED</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">
+      <span class="key">DIRECT</span> — published rate or schedule. &nbsp;&nbsp; <span class="key2">INFERRED</span> — triangulated from compensation, revenue-per-head, or aggregator data; not a quoted price.
+      &nbsp;&nbsp;·&nbsp;&nbsp; <span style="color:var(--bw-grey-100)">Vendor list pricing for SAP IBP enterprise, IBM Maximo IO Standard, Verusen, ToolsGroup, Slimstock, Logility, Kinaxis, o9 — all "contact us." No vendor publishes per-SKU pricing.</span>
+    </p>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">04 / 09</div>
+</section>
+
+<!-- ============== SLIDE 5 — VALUE-SIDE BENCHMARK ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Value-side benchmark</div>
+    <h2 class="h2" style="margin-top:6px">10–25% MRO working-capital release. The rare convergent number in the category.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="value-grid">
+      <div>
+        <div class="headline-stat">
+          <span class="lab">The convergent claim across vendors</span>
+          <div class="v">10 – 25%<span class="smaller">working-capital release</span></div>
+          <div class="desc">Independently corroborated by Verusen, IBM/Oniqua, ToolsGroup, Slimstock, Smart Software. EY mining stretch claim is 25–50% in 18 months.</div>
+        </div>
+        <div class="vendor-strip">
+          <span class="lab">Vendor claims · same band, different language</span>
+          <div class="row"><div class="vn">VERUSEN</div><div class="vc">15–25%, "unlocking millions"</div></div>
+          <div class="row"><div class="vn">IBM / ONIQUA</div><div class="vc">15–25% safety stock cut · 5–20% obsolete cut · up to 40% top-quartile</div></div>
+          <div class="row"><div class="vn">TOOLSGROUP</div><div class="vc">20–30% less stock at 99% service</div></div>
+          <div class="row"><div class="vn">SLIMSTOCK</div><div class="vc">8–10% inventory reduction consistently</div></div>
+          <div class="row"><div class="vn">SMART SW</div><div class="vc">5–25% reduction · 10× ROI</div></div>
+          <div class="row"><div class="vn">EY MINING</div><div class="vc">25–50% working-capital reduction over 18 months (stretch)</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="cases">
+          <span class="lab">Named cases with hard dollars (rare)</span>
+          <div class="case">
+            <div class="nm">Verusen — global mining</div>
+            <div class="vn">17 sites · anonymized</div>
+            <div class="desc"><span class="cyan mono">$96.8M opportunity</span> · <span class="green mono">$550K verified month one</span>. Consulting fee not disclosed.</div>
+          </div>
+          <div class="case">
+            <div class="nm">Nebraska Public Power District</div>
+            <div class="vn">Oniqua · utility analog</div>
+            <div class="desc">Net savings <span class="cyan mono">$25M</span> over engagement.</div>
+          </div>
+          <div class="case">
+            <div class="nm">Queensland Alumina</div>
+            <div class="vn">Mincom · refinery analog</div>
+            <div class="desc"><span class="cyan mono">$8M</span> cut from <span class="mono">$60M</span> MRO base over 3 years.</div>
+          </div>
+          <div class="case">
+            <div class="nm">Stratflow Lesotho</div>
+            <div class="vn">diamond mine · the lone fully-disclosed pair</div>
+            <div class="desc"><span class="cyan mono">$50K</span> consulting → <span class="green mono">$3.6M</span> benefit · <span class="amber mono">73:1 ROI</span> — atypical, not generalizable.</div>
+          </div>
+        </div>
+        <div class="implication">
+          <strong>What this means for our pricing</strong>
+          A single fleet at a medium NA mine ≈ <span class="cyan">$3–25M</span> of MRO inventory. At 10–25% release, that's <span class="cyan">$1–2.5M</span> of free cash per fleet. An $80K sprint priced against a $1–2.5M unlock = <span class="cyan">3–8% fee on value released</span> — well below the 20–40% gain-share procurement norm. A defensible "fair share" position.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">05 / 09</div>
+</section>
+
+<!-- ============== SLIDE 6 — POSITIONING ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Where Birchwood sits</div>
+    <h2 class="h2" style="margin-top:6px">Three concessions for three premiums — and a clean cost-build floor.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="pos-grid">
+      <div class="pos-card give">
+        <h4>What we give up</h4>
+        <ul>
+          <li><strong>No live-data integration</strong>Manual SAP exports, not API. We don't see consumption in real time.</li>
+          <li><strong>No continuous monitoring</strong>Recurring service touch instead of always-on platform alerts.</li>
+          <li><strong>Service, not software</strong>No portfolio engine running across the whole inventory base in parallel.</li>
+        </ul>
+      </div>
+      <div class="pos-card get">
+        <h4>What we earn for it</h4>
+        <ul>
+          <li><strong>Faster time-to-value</strong>2-week sprint vs IBM Maximo IO's 3–5 month implementation.</li>
+          <li><strong>No IT or security barrier</strong>No SAP basis API negotiation — the #1 implementation blocker at mining sites.</li>
+          <li><strong>Human-readable transparency</strong>No black-box AI. Planners and reliability engineers can defend every recommendation to ops.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cost-build">
+      <div class="step">
+        <span class="lab">Senior team · 2 advisors</span>
+        <div class="v">~20<span style="font-size:14px;color:var(--bw-grey-200);margin-left:6px">person-days</span></div>
+        <div class="desc">One lead, one analyst, over 10 working days per fleet.</div>
+      </div>
+      <div class="step">
+        <span class="lab">Boutique-mining day rate</span>
+        <div class="v">$2,500 – $4,000<span style="font-size:14px;color:var(--bw-grey-200);margin-left:6px">/ day</span></div>
+        <div class="desc">Above Embark mid-tier · below Big-4 SM floor.</div>
+      </div>
+      <div class="step">
+        <span class="lab">Cost-build + specialty premium</span>
+        <div class="v">$60K – $120K<span style="font-size:14px;color:var(--bw-grey-200);margin-left:6px">/ fleet</span></div>
+        <div class="desc">Cost-build $50–80K · plus SAP-MRP specialty premium.</div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px"><span style="color:var(--bw-grey-100)">Most-exposed competitive set:</span> the diagnostic / assessment phase of IBM Maximo IO, Verusen, Slimstock implementations (clients pay <span class="cyan">$50–200K</span> for that phase alone), and discrete project work of Big-4 / mining boutiques on inventory + master data.</p>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">06 / 09</div>
+</section>
+
+<!-- ============== SLIDE 7 — RECOMMENDED BASELINE ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Recommended pricing — baseline (one-time)</div>
+    <h2 class="h2" style="margin-top:6px">Per-fleet sprints, scaling to a multi-fleet engagement.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <table class="rec-tbl">
+      <thead>
+        <tr>
+          <th style="width:30%">Engagement shape</th>
+          <th style="width:22%">Price band (USD)</th>
+          <th style="width:48%">Basis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="flag">
+          <td class="shape">Per fleet model · 2-week sprint<span class="sublab">DEFAULT ANCHOR</span></td>
+          <td class="price">$60,000 – $100,000</td>
+          <td class="basis">Cost-build at $2,500–$4,000/day × ~20 person-days, plus MRP-specialty premium · 3–8% of likely working-capital release per fleet.</td>
+        </tr>
+        <tr>
+          <td class="shape">Premium positioning<span class="sublab">TOP OF BAND</span></td>
+          <td class="price">$100,000 – $120,000</td>
+          <td class="basis">Large fleet (e.g. 30+ CAT 793s), high-value spares (>$25M fleet inventory), or first-of-kind for the methodology in that mine.</td>
+        </tr>
+        <tr class="flag">
+          <td class="shape">Multi-fleet engagement · 4–7 models<span class="sublab">TYPICAL MEDIUM NA MINE</span></td>
+          <td class="price">$250,000 – $700,000 total</td>
+          <td class="basis">Per-fleet × count, with 10–20% volume discount at 4+ fleets · NSW Govt 7% above A$1M precedent · standard consulting volume tapering.</td>
+        </tr>
+        <tr>
+          <td class="shape">MULTI · cross-fleet shared stock</td>
+          <td class="price">$40,000 – $80,000</td>
+          <td class="basis">Smaller scope than a per-fleet sprint but still requires discrete analysis of materials consumed across multiple fleet models.</td>
+        </tr>
+        <tr>
+          <td class="shape">Data Quality gate only<span class="sublab">ENTRY-LEVEL OFFER</span></td>
+          <td class="price">$20,000 – $40,000</td>
+          <td class="basis">Gate 1 standalone — no further sprints. Matches the "free trial → paid baseline" funnel Oniqua used historically as market entry.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rec-foot">
+      <strong>Defensible mid-point quote</strong>
+      For a medium NA mine with <span class="cyan">5 fleet models + a MULTI module</span>: <span class="big">~$400K – $500K</span> total baseline engagement, delivered over 10–14 weeks of staggered sprints. Sits well below Big-4 mining diagnostics ($1–2M+) and well above pure-software annual licenses — a clean positioning gap.
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">07 / 09</div>
+</section>
+
+<!-- ============== SLIDE 8 — RECOMMENDED RECURRING ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Recommended pricing — recurring refresh</div>
+    <h2 class="h2" style="margin-top:6px">Quarterly default. Service-led, not platform-led.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <table class="rec-tbl">
+      <thead>
+        <tr>
+          <th style="width:24%">Cadence</th>
+          <th style="width:34%">Scope</th>
+          <th style="width:22%">Per fleet (USD)</th>
+          <th style="width:20%">Annualized / fleet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="flag">
+          <td class="shape">Quarterly refresh<span class="sublab">RECOMMENDED DEFAULT</span></td>
+          <td class="basis">Movers/exceptions review · new-parts review · action-list re-prioritization · dashboard update · 4–8 hours analyst Q&amp;A.</td>
+          <td class="price">$15,000 – $25,000 / qtr</td>
+          <td class="price">$60,000 – $100,000 / yr</td>
+        </tr>
+        <tr>
+          <td class="shape">Semi-annual refresh<span class="sublab">LIGHTER CLIENTS</span></td>
+          <td class="basis">Same scope, less frequent. For mines with stable fleets and slow consumption-pattern drift.</td>
+          <td class="price">$20,000 – $35,000 / half</td>
+          <td class="price">$40,000 – $70,000 / yr</td>
+        </tr>
+        <tr>
+          <td class="shape">Annual full re-baseline</td>
+          <td class="basis">Full re-run of segmentation, criticality, MRP type recommendations. Triggered post-M&amp;A, fleet changes, OEM transitions.</td>
+          <td class="price">$30,000 – $50,000</td>
+          <td class="price">discrete event</td>
+        </tr>
+        <tr>
+          <td class="shape">Retainer alternative<span class="sublab">ALL-INCLUSIVE</span></td>
+          <td class="basis">Continuous advisor access · monthly KPI report · exception alerts · ad-hoc requests within scope.</td>
+          <td class="price">$10,000 – $20,000 / mo</td>
+          <td class="price">$120K – $240K / yr</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rec-foot">
+      <strong>Default rationale — 25–35% of baseline annually</strong>
+      Sits between the software-maintenance norm (<span class="cyan">15–20%</span>, lower bound) and the advisory norm (<span class="cyan">25–50%</span>, upper bound). Birchwood's recurring is service-led, not platform-led — the upper of the two bounds is right.
+      &nbsp;&nbsp;<span style="color:var(--bw-grey-200)">For a 5-fleet client, recurring annual revenue lands at</span> <span class="big">~$300K – $500K / yr</span> — roughly the original baseline amortized over 12–18 months.
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">08 / 09</div>
+</section>
+
+<!-- ============== SLIDE 9 — GAIN-SHARE + CLOSE ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Optional upside · summary</div>
+    <h2 class="h2" style="margin-top:6px">A gain-share variant aligns our economics with the outcome.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="gs-grid">
+      <div class="gs-card">
+        <h4>Gain-share variant<br/>on the recurring layer</h4>
+        <p style="font-family:var(--font-body);font-size:13.5px;color:var(--bw-grey-100);line-height:1.55">For sophisticated clients with verifiable working-capital outcomes. Defensible structure:</p>
+        <div class="struct">
+          <div class="yr">
+            <div class="ylab">Year 1</div>
+            <div class="ydesc">Base recurring at <span class="v">60–70%</span> of standard price <span class="muted">+</span> <span class="v">15–25%</span> of verified working-capital release.</div>
+          </div>
+          <div class="yr">
+            <div class="ylab">Year 2</div>
+            <div class="ydesc">Tapers to a flat retainer once the working-capital release has been realized and the new MRP regime is steady-state.</div>
+          </div>
+        </div>
+        <div class="precedent">
+          <span class="label" style="display:block;margin-bottom:6px">Precedent</span>
+          <span class="ven">PARTNERS IN PERFORMANCE</span> &nbsp;built mining heritage on contingent fees · <span class="ven">STRATFLOW</span> &nbsp;puts portion of fees at risk · <span class="ven">MCKINSEY RTS</span> &nbsp;offers results-oriented turnarounds. Cross-industry procurement gain-share norm: <span class="cyan">20–40%</span> of validated savings, often tapered.
+        </div>
+      </div>
+      <div class="summary">
+        <h4>Bottom line</h4>
+        <div class="row-line">
+          <div class="lab2 cyan-l">Position</div>
+          <div class="v"><strong>Defensible gap</strong> in a thinly-priced market — between SaaS subscriptions (<span class="cyan">$37K/yr Maximo Essentials</span>) and Big-4 transformation programs (<span class="cyan">$1–2M+ diagnostics</span>).</div>
+        </div>
+        <div class="row-line">
+          <div class="lab2 crit-l">Biggest risk</div>
+          <div class="v"><strong>Pricing the floor too low.</strong> Below $60K per fleet positions us as a software replacement (we aren't), invites comparison to Maximo Essentials, and undervalues the senior-advisor cost build.</div>
+        </div>
+        <div class="row-line">
+          <div class="lab2 ok-l">Biggest opportunity</div>
+          <div class="v"><strong>The gain-share variant.</strong> Clear mining precedent (PiP, Stratflow). Aligns our economics with the working-capital outcomes the methodology directly produces.</div>
+        </div>
+        <div class="row-line">
+          <div class="lab2">Next step</div>
+          <div class="v">Confirm which engagement shape leads with the first opportunity — fixed-fee sprint as the default anchor, gain-share variant held in reserve for the right client conversation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Pricing Review</div>
+  <div class="pagenum">09 / 09</div>
+</section>
+
+<div class="nav-help">PRESS <span>F11</span> FOR FULLSCREEN  ·  <span>CTRL+P</span> TO EXPORT PDF</div>
+
+</body>
+</html>

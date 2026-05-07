@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Birchwood Advisory · Inventory Optimization · Customer Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bw-midnight:#081E2B; --bw-deep-navy:#0C2D3B; --bw-dark-teal:#164049;
+  --bw-mid-teal:#2F635F; --bw-teal:#356A71;
+  --bw-cyan:#1FCED8; --bw-cyan-glow:#4FC2D7; --bw-aqua:#86D6CF; --bw-aqua-light:#ABEFEB;
+  --bw-green:#5AB69D;
+  --bw-white:#F0F4F3; --bw-grey-100:#D6DFDE; --bw-grey-200:#9BABA8; --bw-grey-300:#5C7270;
+  --bw-status-ok:#34D399; --bw-status-warn:#FBBF24; --bw-status-crit:#EF4444;
+  --bw-wr:#7B2D8B;
+  --font-display:'Barlow Condensed',sans-serif;
+  --font-heading:'Rajdhani',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;color:var(--bw-grey-100);font-family:var(--font-body);font-weight:400;line-height:1.5}
+body{display:flex;flex-direction:column;align-items:center;padding:32px 0;gap:24px}
+
+/* slide canvas — 16:9 — 1280×720 */
+.slide{
+  position:relative;
+  width:1280px;height:720px;
+  background:var(--bw-midnight);
+  color:var(--bw-grey-100);
+  overflow:hidden;
+  page-break-after:always;
+  break-after:page;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+
+/* slide-number chip */
+.slide .pagenum{
+  position:absolute;right:36px;bottom:24px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;
+  color:var(--bw-grey-200);text-transform:uppercase;
+}
+.slide .brandtag{
+  position:absolute;left:36px;bottom:24px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;
+  color:var(--bw-grey-200);text-transform:uppercase;
+}
+
+/* H1 / H2 / H3 / body */
+.h1{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:3px;line-height:1.05;color:var(--bw-white)}
+.h2{font-family:var(--font-display);font-weight:700;text-transform:uppercase;letter-spacing:2px;line-height:1.1;color:var(--bw-white)}
+.h3{font-family:var(--font-heading);font-weight:600;color:var(--bw-white);letter-spacing:.5px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--bw-cyan)}
+.label{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--bw-grey-200)}
+.muted{color:var(--bw-grey-200)}
+.cyan{color:var(--bw-cyan)}
+.mono{font-family:var(--font-mono)}
+.body p{font-family:var(--font-body);font-size:16px;line-height:1.6;color:var(--bw-grey-100)}
+
+/* slide title block */
+.titlebar{position:absolute;left:60px;top:48px;right:60px}
+.titlebar .h2{font-size:32px}
+.titlebar .accent{
+  width:64px;height:2px;background:var(--bw-cyan);opacity:.45;margin-top:14px;
+}
+
+/* content area */
+.content{position:absolute;left:60px;right:60px;top:140px;bottom:80px}
+
+/* utility */
+.row{display:flex;gap:24px}
+.col{display:flex;flex-direction:column;gap:18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px}
+
+/* card — sharp corners, brand */
+.card{
+  background:var(--bw-deep-navy);
+  border:1px solid rgba(31,206,216,.12);
+  padding:22px 24px;
+}
+.card .label{margin-bottom:8px;display:block}
+.card .v{font-family:var(--font-display);font-size:42px;font-weight:700;color:var(--bw-cyan);letter-spacing:1px;line-height:1;margin-bottom:8px}
+.card p{font-size:14px;line-height:1.55;color:var(--bw-grey-100)}
+
+/* status pill */
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 12px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(31,206,216,.18);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bw-grey-100)
+}
+.dot{width:9px;height:9px;display:inline-block;flex-shrink:0}
+
+/* SLIDE 1 — TITLE */
+.s-title{background:var(--bw-midnight);position:relative}
+.s-title::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 35%, rgba(31,206,216,.10), transparent 60%);
+  pointer-events:none;
+}
+.s-title .wrap{position:absolute;left:90px;right:90px;top:160px}
+.s-title .pre{font-family:var(--font-mono);color:var(--bw-cyan);letter-spacing:3px;font-size:13px;text-transform:uppercase;margin-bottom:18px}
+.s-title h1{font-size:96px;letter-spacing:5px;line-height:.95}
+.s-title .sub{font-family:var(--font-heading);font-weight:500;color:var(--bw-cyan);font-size:28px;letter-spacing:1px;margin-top:22px;line-height:1.25}
+.s-title .divider{width:120px;height:2px;background:var(--bw-cyan);margin:34px 0;opacity:.7}
+.s-title .meta{font-family:var(--font-mono);font-size:13px;letter-spacing:2px;color:var(--bw-grey-200);text-transform:uppercase}
+.s-title .meta strong{color:var(--bw-white);font-weight:500}
+
+/* SLIDE 2 — problem */
+.problem-headline{font-size:56px;line-height:1.05}
+.problem-headline em{font-style:normal;color:var(--bw-cyan)}
+.problem-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.problem-list .num{
+  font-family:var(--font-display);font-size:60px;font-weight:700;color:var(--bw-cyan);
+  line-height:1;letter-spacing:1px;
+}
+.problem-list .txt{margin-top:14px;font-family:var(--font-body);font-size:15px;line-height:1.55;color:var(--bw-grey-100)}
+.problem-list .lab{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--bw-grey-200);margin-bottom:8px;display:block}
+
+/* SLIDE 3 — cost — two columns excess vs stockout */
+.cost-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:8px}
+.cost-cols .col-card{background:var(--bw-deep-navy);border-left:3px solid var(--bw-cyan);padding:28px 32px;height:100%}
+.cost-cols .col-card.warn{border-left-color:var(--bw-status-warn)}
+.cost-cols .col-card.crit{border-left-color:var(--bw-status-crit)}
+.cost-cols h3{font-family:var(--font-display);text-transform:uppercase;letter-spacing:2px;font-size:22px;color:var(--bw-white);margin-bottom:6px}
+.cost-cols .stat{font-family:var(--font-display);font-size:36px;color:var(--bw-cyan);margin-top:14px;letter-spacing:1px}
+.cost-cols ul{list-style:none;margin-top:16px}
+.cost-cols li{font-family:var(--font-body);font-size:14px;color:var(--bw-grey-100);padding:6px 0;border-bottom:1px solid rgba(155,171,168,.10);line-height:1.5}
+.cost-cols li:last-child{border-bottom:none}
+.cost-cols li::before{content:"—  ";color:var(--bw-cyan);font-family:var(--font-mono)}
+.cost-foot{margin-top:30px;font-family:var(--font-heading);font-style:italic;color:var(--bw-grey-200);font-size:18px;line-height:1.4;letter-spacing:.3px}
+.cost-foot span{color:var(--bw-cyan);font-style:normal;font-weight:600}
+
+/* SLIDE 4 — approach — 3-step */
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:30px}
+.step{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:24px;position:relative;height:100%}
+.step .n{
+  font-family:var(--font-display);font-size:14px;letter-spacing:2px;color:var(--bw-cyan);
+  text-transform:uppercase;display:block;margin-bottom:6px;
+}
+.step .stepname{font-family:var(--font-display);font-size:28px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;line-height:1.1;margin-bottom:14px}
+.step p{font-family:var(--font-body);font-size:14px;line-height:1.55;color:var(--bw-grey-100)}
+.step .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase;margin-top:16px;display:block;border-top:1px solid rgba(155,171,168,.12);padding-top:12px}
+
+/* SLIDE 5 — chart visual */
+.chart-wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:stretch;height:100%}
+.chart-canvas{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:18px;display:flex;flex-direction:column;justify-content:center}
+.chart-svg{width:100%;height:auto;display:block}
+.chart-side h4{font-family:var(--font-display);font-size:22px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+.chart-side .row-line{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(155,171,168,.10)}
+.chart-side .row-line:last-child{border-bottom:none}
+.chart-side .swatch{width:34px;height:3px;flex-shrink:0}
+.chart-side .swatch.dashed{height:0;border-top:2px dashed currentColor}
+.chart-side .lab2{font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bw-grey-200)}
+.chart-side .ds{font-family:var(--font-heading);font-size:16px;color:var(--bw-white);font-weight:500;margin-top:2px;line-height:1.3}
+.chart-side .desc{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);margin-top:4px;line-height:1.45}
+
+/* SLIDE 6 — HCE */
+.hce-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:32px;height:100%;align-items:start}
+.hce-grid h4{font-family:var(--font-display);font-size:24px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;line-height:1.15}
+.hce-grid p{font-family:var(--font-body);font-size:15px;color:var(--bw-grey-100);line-height:1.6;margin-bottom:14px}
+.hce-grid p strong{color:var(--bw-cyan);font-weight:600}
+.hce-table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:12px;margin-top:8px}
+.hce-table th{background:var(--bw-dark-teal);color:var(--bw-grey-200);padding:8px 10px;text-align:left;font-weight:500;letter-spacing:1px;text-transform:uppercase;font-size:10px}
+.hce-table td{background:var(--bw-deep-navy);color:var(--bw-grey-100);padding:9px 10px;border-bottom:1px solid rgba(155,171,168,.06)}
+.hce-table tr:nth-child(odd) td{background:#091F2D}
+.hce-table .num-c{text-align:right;color:var(--bw-cyan)}
+.hce-callout{background:var(--bw-deep-navy);border-left:3px solid var(--bw-status-warn);padding:14px 18px;margin-top:16px;font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);line-height:1.5}
+.hce-callout strong{color:var(--bw-status-warn);font-family:var(--font-mono);text-transform:uppercase;font-size:11px;letter-spacing:1.5px;display:block;margin-bottom:4px}
+
+/* SLIDE 7 — traffic lights */
+.tl-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:8px}
+.tl-card{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:20px 22px;position:relative;border-top:3px solid var(--bw-cyan)}
+.tl-card.green{border-top-color:var(--bw-status-ok)}
+.tl-card.blue{border-top-color:var(--bw-cyan)}
+.tl-card.orange{border-top-color:var(--bw-status-warn)}
+.tl-card.red{border-top-color:var(--bw-status-crit)}
+.tl-card.wr{border-top-color:var(--bw-wr)}
+.tl-card.grey{border-top-color:var(--bw-grey-300)}
+.tl-card .tl-name{font-family:var(--font-display);font-size:24px;color:var(--bw-white);text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.tl-card .dotbig{width:14px;height:14px;display:inline-block}
+.tl-card .when{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bw-grey-200);margin-bottom:10px;display:block}
+.tl-card .what{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);line-height:1.5}
+
+/* SLIDE 8 — deliverables */
+.del-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+.del{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:24px 26px;position:relative}
+.del .badge{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;color:var(--bw-cyan);text-transform:uppercase;margin-bottom:6px;display:block}
+.del h4{font-family:var(--font-display);font-size:24px;color:var(--bw-white);text-transform:uppercase;letter-spacing:2px;font-weight:700;line-height:1.1;margin-bottom:10px}
+.del p{font-family:var(--font-body);font-size:14px;color:var(--bw-grey-100);line-height:1.55}
+.del ul{list-style:none;margin-top:10px}
+.del li{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);padding:4px 0 4px 14px;position:relative;line-height:1.5}
+.del li::before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;background:var(--bw-cyan)}
+
+/* SLIDE 9 — process flow */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;align-items:stretch}
+.flow .gate{background:var(--bw-deep-navy);border:1px solid rgba(31,206,216,.12);padding:20px;position:relative;border-top:2px solid var(--bw-cyan)}
+.flow .gnum{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;color:var(--bw-cyan);margin-bottom:6px;display:block;text-transform:uppercase}
+.flow h5{font-family:var(--font-display);font-size:20px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;line-height:1.15;margin-bottom:10px}
+.flow p{font-family:var(--font-body);font-size:13px;color:var(--bw-grey-100);line-height:1.5;margin-bottom:8px}
+.flow .gtag{font-family:var(--font-mono);font-size:10px;letter-spacing:1.2px;color:var(--bw-grey-200);text-transform:uppercase;display:block;border-top:1px solid rgba(155,171,168,.12);padding-top:8px;margin-top:auto}
+.flow-foot{display:flex;align-items:center;gap:14px;margin-top:30px;font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;color:var(--bw-grey-200);text-transform:uppercase}
+.flow-foot::before{content:"";width:32px;height:2px;background:var(--bw-cyan);opacity:.5;display:inline-block}
+
+/* SLIDE 10 — what we need */
+.need-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;height:100%;align-items:start}
+.need-tbl{width:100%;border-collapse:collapse;font-family:var(--font-body);font-size:14px;margin-top:8px}
+.need-tbl th{background:var(--bw-dark-teal);color:var(--bw-grey-200);padding:10px 12px;text-align:left;font-family:var(--font-mono);font-weight:500;letter-spacing:1.2px;text-transform:uppercase;font-size:10.5px}
+.need-tbl td{background:var(--bw-deep-navy);padding:12px;border-bottom:1px solid rgba(155,171,168,.06);color:var(--bw-grey-100);line-height:1.45}
+.need-tbl tr:nth-child(even) td{background:#091F2D}
+.need-tbl td.fname{font-family:var(--font-mono);color:var(--bw-cyan);font-size:13px;white-space:nowrap}
+.need-side .label{display:block;margin-bottom:8px}
+.need-side h4{font-family:var(--font-display);font-size:24px;color:var(--bw-white);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:700}
+.need-side p{font-family:var(--font-body);font-size:14px;color:var(--bw-grey-100);line-height:1.55;margin-bottom:14px}
+.timeline{display:flex;gap:0;margin-top:8px;border:1px solid rgba(31,206,216,.18)}
+.timeline .ph{flex:1;padding:12px 14px;border-right:1px solid rgba(31,206,216,.12);background:var(--bw-deep-navy)}
+.timeline .ph:last-child{border-right:none}
+.timeline .phn{font-family:var(--font-mono);font-size:9.5px;letter-spacing:1.2px;color:var(--bw-cyan);text-transform:uppercase;display:block;margin-bottom:4px}
+.timeline .phl{font-family:var(--font-display);font-size:13px;color:var(--bw-white);text-transform:uppercase;font-weight:600;letter-spacing:1px;line-height:1.2}
+.timeline .phd{font-family:var(--font-mono);font-size:10px;color:var(--bw-grey-200);margin-top:4px;display:block}
+
+/* SLIDE 11 — closing */
+.s-close{background:var(--bw-deep-navy);position:relative}
+.s-close::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%, rgba(31,206,216,.10), transparent 60%);pointer-events:none}
+.s-close .wrap{position:absolute;left:90px;right:90px;top:160px}
+.s-close h1{font-family:var(--font-display);font-size:84px;color:var(--bw-white);text-transform:uppercase;letter-spacing:5px;line-height:.95;font-weight:700}
+.s-close .tag{font-family:var(--font-heading);font-weight:500;font-size:24px;color:var(--bw-cyan);letter-spacing:1px;margin-top:18px}
+.s-close .divider{width:120px;height:2px;background:var(--bw-cyan);margin:36px 0;opacity:.7}
+.s-close .nextrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px;margin-top:18px}
+.s-close .nextrow .blk .label{display:block;margin-bottom:6px}
+.s-close .nextrow .blk .v{font-family:var(--font-heading);font-weight:500;color:var(--bw-white);font-size:18px;line-height:1.35}
+.s-close .nextrow .blk .v.mono{font-family:var(--font-mono);font-size:14px;color:var(--bw-cyan)}
+
+/* print to PDF — one slide per page */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{background:#000}
+  body{padding:0;gap:0}
+  .slide{box-shadow:none;margin:0}
+  .nav-help{display:none}
+}
+
+.nav-help{
+  position:fixed;right:14px;bottom:14px;
+  background:rgba(8,30,43,.94);border:1px solid rgba(31,206,216,.25);
+  color:var(--bw-grey-200);padding:8px 12px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;z-index:1000;
+}
+.nav-help span{color:var(--bw-cyan)}
+</style>
+</head>
+<body>
+
+<!-- ============== SLIDE 1 — TITLE ============== -->
+<section class="slide s-title">
+  <div class="wrap">
+    <div class="pre">Birchwood Advisory · Mining Equipment & Technology</div>
+    <h1 class="h1">Inventory<br/>Optimization</h1>
+    <div class="sub">Right-sizing mine inventory<br/>with real consumption data.</div>
+    <div class="divider"></div>
+    <div class="meta"><strong>Customer Briefing</strong> &nbsp;·&nbsp; Mobile Mining Equipment & Technology Advisory</div>
+  </div>
+  <div class="brandtag">Birchwood Advisory</div>
+  <div class="pagenum">01 / 11</div>
+</section>
+
+<!-- ============== SLIDE 2 — THE PROBLEM ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">The problem</div>
+    <h2 class="h2" style="margin-top:6px">Your MRP settings were right once. Probably not anymore.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="problem-list">
+      <div>
+        <span class="lab">01 — Set and forgotten</span>
+        <div class="num">3–7<span style="font-size:22px;color:var(--bw-grey-200);letter-spacing:.5px;margin-left:8px">years</span></div>
+        <p class="txt">Most operations are still running on Min/Max levels set at commissioning or the last MRP refresh. Reviews get postponed indefinitely because there's no easy way to do them at scale.</p>
+      </div>
+      <div>
+        <span class="lab">02 — Demand has moved</span>
+        <div class="num">∆<span style="font-size:22px;color:var(--bw-grey-200);letter-spacing:.5px;margin-left:8px">always</span></div>
+        <p class="txt">OEM revisions, fleet additions and retirements, duty-cycle changes, supplier swaps. Every one of them shifts which parts move and how fast. Settings frozen in time can't keep up.</p>
+      </div>
+      <div>
+        <span class="lab">03 — The cost is hidden</span>
+        <div class="num">2-way<span style="font-size:22px;color:var(--bw-grey-200);letter-spacing:.5px;margin-left:8px">bleed</span></div>
+        <p class="txt">It shows up as dead stock <em style="color:var(--bw-cyan);font-style:normal">and</em> stockouts at the same time. Different SKUs, same root cause — the settings haven't been re-grounded in actual consumption.</p>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">02 / 11</div>
+</section>
+
+<!-- ============== SLIDE 3 — COST OF STALE MRP ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">The cost</div>
+    <h2 class="h2" style="margin-top:6px">Stale MRP bleeds money in two directions at once.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="cost-cols">
+      <div class="col-card warn">
+        <h3>Excess stock</h3>
+        <span class="label">When Min/Max is too high for actual demand</span>
+        <div class="stat">Working capital<br/>locked up</div>
+        <ul>
+          <li>Cash tied up in slow-movers — capital that can't be redeployed</li>
+          <li>Warehouse space consumed by parts that turn once every 18+ months</li>
+          <li>Obsolescence write-off risk as fleet ages out</li>
+          <li>Carrying cost runs at 18–25% of inventory value annually</li>
+        </ul>
+      </div>
+      <div class="col-card crit">
+        <h3>Stockouts</h3>
+        <span class="label">When Min/Max is too low or the wrong MRP type</span>
+        <div class="stat">Production<br/>at risk</div>
+        <ul>
+          <li>Unplanned equipment downtime — lost tonnage at bottleneck assets</li>
+          <li>Expedited freight, premium-priced spot buys to recover</li>
+          <li>Maintenance plan overruns when parts arrive late</li>
+          <li>One stockout on a critical part can cost more than a year of carrying cost</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cost-foot">"And you can't fix it by intuition. Every part needs to be looked at on its own. <span>That's where most teams stop — not because they don't want to, because there isn't time.</span>"</div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">03 / 11</div>
+</section>
+
+<!-- ============== SLIDE 4 — APPROACH ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Our approach</div>
+    <h2 class="h2" style="margin-top:6px">Material by material. Grounded in actual consumption.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <p style="font-family:var(--font-body);font-size:16px;color:var(--bw-grey-100);max-width:920px;line-height:1.55">
+      We don't model. We don't forecast. We read what your fleet has already done over the past year of MB51 history, calculate the consumption rate of every qualifying material, and use that rate — and only that rate — to recommend Min/Max.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <span class="n">Step 01</span>
+        <div class="stepname">Pull movement history</div>
+        <p>Twelve-plus months of MB51 transactions, joined to IW39 work orders so we count only fleet-related consumption (movement types 261, 201). Returns and corrections net out.</p>
+        <span class="tag">MB51 · IW39 · Fleet Master</span>
+      </div>
+      <div class="step">
+        <span class="n">Step 02</span>
+        <div class="stepname">Measure the gradient</div>
+        <p>Two consumption windows per material: a five-month baseline (P1) and a rolling three-month current (P2). The delta is your real demand trajectory, not a memory of last year.</p>
+        <span class="tag">P1 base · P2 rolling · per-material rate</span>
+      </div>
+      <div class="step">
+        <span class="n">Step 03</span>
+        <div class="stepname">Recommend &amp; flag</div>
+        <p>Recommended Min = P2 rate × min months. Recommended Max = P2 rate × max months. Every line gets a traffic-light call with a clear next action — no inference, no "smart" overrides.</p>
+        <span class="tag">Min/Max recommendation · 6-light triage</span>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">04 / 11</div>
+</section>
+
+<!-- ============== SLIDE 5 — CONSUMPTION CHART (slope variance) ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">How we read consumption</div>
+    <h2 class="h2" style="margin-top:6px">When the slope changes, the settings have to change with it.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="chart-wrap">
+      <div class="chart-canvas">
+        <svg class="chart-svg" viewBox="0 0 720 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <!-- chart bg -->
+          <rect x="0" y="0" width="720" height="420" fill="#0C2D3B"/>
+          <!-- gridlines -->
+          <g stroke="#164049" stroke-width="1">
+            <line x1="60" y1="76"  x2="690" y2="76"/>
+            <line x1="60" y1="142" x2="690" y2="142"/>
+            <line x1="60" y1="208" x2="690" y2="208"/>
+            <line x1="60" y1="274" x2="690" y2="274"/>
+            <line x1="60" y1="340" x2="690" y2="340"/>
+          </g>
+          <!-- axes -->
+          <line x1="60" y1="40" x2="60"  y2="370" stroke="#9BABA8" stroke-width="1.5"/>
+          <line x1="60" y1="370" x2="690" y2="370" stroke="#9BABA8" stroke-width="1.5"/>
+          <!-- axis labels -->
+          <text x="20" y="200" fill="#9BABA8" font-family="JetBrains Mono" font-size="10" text-anchor="middle" transform="rotate(-90 20 200)" letter-spacing="1.5">CUMULATIVE QTY</text>
+          <text x="375" y="400" fill="#9BABA8" font-family="JetBrains Mono" font-size="10" text-anchor="middle" letter-spacing="1.5">APR — MAY — JUN — JUL — AUG — SEP — OCT — NOV — DEC — JAN — FEB — MAR</text>
+          <!-- P1 / P2 region shading -->
+          <rect x="60"  y="40" width="263" height="330" fill="#1FCED8" fill-opacity="0.04"/>
+          <rect x="533" y="40" width="157" height="330" fill="#5AB69D" fill-opacity="0.05"/>
+          <text x="191" y="56" fill="#4FC2D7" font-family="JetBrains Mono" font-size="10" letter-spacing="1.2" text-anchor="middle">PERIOD 1 · BASELINE (5 MO)</text>
+          <text x="611" y="56" fill="#86D6CF" font-family="JetBrains Mono" font-size="10" letter-spacing="1.2" text-anchor="middle">PERIOD 2 · ROLLING (3 MO)</text>
+          <!-- STOCK-OUT GAP zone — wedge between P1 projection and actual cumulative (right of P1) -->
+          <polygon points="323,270 690,131 690,40" fill="#EF4444" fill-opacity="0.07"/>
+          <!-- P1 trend — solid through P1 (the "old steady state") -->
+          <line x1="60"  y1="370" x2="323" y2="270" stroke="#1FCED8" stroke-width="2.2" stroke-dasharray="6 4"/>
+          <!-- P1 trend — extended through gap & P2 (faded — what current Min/Max assumes) -->
+          <line x1="323" y1="270" x2="690" y2="131" stroke="#1FCED8" stroke-width="1.6" stroke-dasharray="3 4" opacity="0.55"/>
+          <!-- P2 trend — over P2 region only (the new reality) -->
+          <line x1="533" y1="231" x2="690" y2="40" stroke="#5AB69D" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <!-- Cumulative step line (actual): gentle in P1, low gap, steep in P2 -->
+          <polyline fill="none" stroke="#FBBF24" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="square"
+            points="60,370 90,370 90,348 140,348 140,327 190,327 190,305 240,305 240,284 290,284 290,270 323,270 370,270 370,257 420,257 420,244 470,244 470,231 533,231 560,231 560,192 590,192 590,154 615,154 615,116 645,116 645,78 670,78 670,40 690,40"/>
+          <!-- P1 rate label (inside P1 zone) -->
+          <text x="200" y="312" fill="#1FCED8" font-family="JetBrains Mono" font-size="11" letter-spacing="1px" font-weight="500">P1 RATE  3.0 / MO</text>
+          <!-- P2 rate label (just above P2 trend) -->
+          <text x="538" y="118" fill="#5AB69D" font-family="JetBrains Mono" font-size="11" letter-spacing="1px" font-weight="500">P2 RATE  9.7 / MO  ·  3.2×</text>
+          <!-- P1 projection caption (faded, above projection line in gap zone) -->
+          <text x="380" y="218" fill="#1FCED8" font-family="JetBrains Mono" font-size="9" opacity="0.7" letter-spacing="0.6px">P1 projected — what current Min/Max assumes</text>
+          <!-- STOCK-OUT EXPOSURE label inside the red wedge -->
+          <text x="488" y="92"  fill="#EF4444" font-family="JetBrains Mono" font-size="11" font-weight="500" letter-spacing="1.2px">STOCK-OUT EXPOSURE</text>
+          <text x="488" y="106" fill="#9BABA8" font-family="JetBrains Mono" font-size="9"  letter-spacing="0.5px">≈ 14 units the P1 setting wouldn't see</text>
+          <!-- right-edge gap bracket -->
+          <line x1="685" y1="40"  x2="685" y2="131" stroke="#EF4444" stroke-width="2.5"/>
+          <line x1="681" y1="40"  x2="689" y2="40"  stroke="#EF4444" stroke-width="2.5"/>
+          <line x1="681" y1="131" x2="689" y2="131" stroke="#EF4444" stroke-width="2.5"/>
+          <!-- legend -->
+          <g font-family="JetBrains Mono" font-size="10" letter-spacing="1px">
+            <line x1="60"  y1="395" x2="92"  y2="395" stroke="#FBBF24" stroke-width="2.5"/><text x="98"  y="398" fill="#D6DFDE">CUMULATIVE</text>
+            <line x1="200" y1="395" x2="232" y2="395" stroke="#1FCED8" stroke-width="2" stroke-dasharray="6 4"/><text x="238" y="398" fill="#D6DFDE">P1 TREND</text>
+            <line x1="318" y1="395" x2="350" y2="395" stroke="#5AB69D" stroke-width="2" stroke-dasharray="6 4"/><text x="356" y="398" fill="#D6DFDE">P2 TREND</text>
+            <line x1="450" y1="395" x2="466" y2="395" stroke="#EF4444" stroke-width="2.5"/><text x="472" y="398" fill="#D6DFDE">STOCK-OUT GAP</text>
+          </g>
+        </svg>
+      </div>
+      <div class="chart-side">
+        <h4>The slope is changing</h4>
+        <div class="row-line" style="color:var(--bw-cyan)">
+          <span class="swatch dashed"></span>
+          <div>
+            <div class="lab2">P1 baseline · 5 months</div>
+            <div class="ds"><span class="mono cyan" style="font-size:14px">3.0&nbsp;/&nbsp;mo</span> &nbsp;steady draw-down — the rate the current Min/Max was probably set for</div>
+          </div>
+        </div>
+        <div class="row-line" style="color:var(--bw-green)">
+          <span class="swatch dashed"></span>
+          <div>
+            <div class="lab2">P2 current · 3 months rolling</div>
+            <div class="ds"><span class="mono" style="color:var(--bw-green);font-size:14px">9.7&nbsp;/&nbsp;mo</span> &nbsp;<span class="cyan">3.2×</span> the baseline — sustained, not a one-off spike</div>
+          </div>
+        </div>
+        <div class="row-line">
+          <span class="swatch" style="background:#EF4444"></span>
+          <div>
+            <div class="lab2">Stock-out exposure</div>
+            <div class="ds">Min/Max anchored on P1 underestimates demand by ~14 units over the same window — a guaranteed shortfall under the current rate.</div>
+          </div>
+        </div>
+        <div class="hce-callout" style="border-left-color:#EF4444;margin-top:18px">
+          <strong style="color:#EF4444">The implication</strong>
+          A 3-month Min set on P1 (≈ 9 units) covers <span class="cyan">under one month</span> at the P2 rate. The Orange traffic-light flag exists for exactly this case — and Slide 7 shows how every part is triaged the same way.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">05 / 11</div>
+</section>
+
+<!-- ============== SLIDE 6 — HCE ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">High Consumption Events</div>
+    <h2 class="h2" style="margin-top:6px">Not all consumption is equal. We separate signal from event.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="hce-grid">
+      <div>
+        <h4>One rebuild can spike a part 50× normal demand.</h4>
+        <p>An undercarriage rebuild, a sprocket changeout, a hose replacement at major service — these are real work orders, but they don't repeat next month. A naive Min/Max tool averages the spike in. <strong>Yours doesn't need to.</strong></p>
+        <p>Our pipeline flags any work order that consumed <span class="cyan">≥ 50% of the period total</span> or <span class="cyan">≥ 3× the average WO quantity</span>. The flagged events are listed alongside the chart, with WO number, description, equipment, and date — so the planner sees exactly what spiked the rate and decides whether to apply the raw or the adjusted rate.</p>
+        <div class="hce-callout">
+          <strong>Why this matters</strong>
+          The raw P2 rate above includes a 30-unit undercarriage rebuild. The adjusted rate (HCE excluded) is 4.1/mo, not 6.8. That's the difference between recommending a Max of 41 units or 25.
+        </div>
+      </div>
+      <div>
+        <span class="label" style="display:block;margin-bottom:8px">Sample HCE flag — Material 9876543</span>
+        <table class="hce-table">
+          <thead>
+            <tr><th>Period</th><th>Work Order</th><th>Description</th><th>Date</th><th>Equip</th><th class="num-c">Qty</th><th class="num-c">% Period</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>P2</td><td>31234</td><td>Undercarriage rebuild</td><td>2026-02-14</td><td>TD402</td><td class="num-c">30</td><td class="num-c">68%</td></tr>
+            <tr><td>P1</td><td>30188</td><td>Sprocket changeout</td><td>2025-06-22</td><td>TD407</td><td class="num-c">12</td><td class="num-c">52%</td></tr>
+          </tbody>
+        </table>
+        <p style="font-family:var(--font-mono);font-size:11px;color:var(--bw-grey-200);margin-top:14px;line-height:1.5;letter-spacing:.5px">
+          Raw P2 rate &nbsp;&nbsp; <span style="color:var(--bw-cyan)">6.8 / mo</span><br/>
+          Adjusted (HCE excl.) &nbsp; <span style="color:var(--bw-status-warn)">4.1 / mo</span><br/>
+          Pattern &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color:var(--bw-grey-100)">LUMPY</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">06 / 11</div>
+</section>
+
+<!-- ============== SLIDE 7 — TRAFFIC LIGHTS ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">Recommendation system</div>
+    <h2 class="h2" style="margin-top:6px">Six signals. Every part lands on one of them.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="tl-grid">
+      <div class="tl-card green">
+        <div class="tl-name"><span class="dotbig" style="background:var(--bw-status-ok)"></span>GREEN</div>
+        <span class="when">Settings already optimal</span>
+        <p class="what">Recommended Min and Max match current. No action — confirm in next review cycle.</p>
+      </div>
+      <div class="tl-card blue">
+        <div class="tl-name"><span class="dotbig" style="background:var(--bw-cyan)"></span>BLUE</div>
+        <span class="when">Excess inventory — safe to lower</span>
+        <p class="what">Both rec values fall below current. Lower Min/Max to release working capital. Lowest-risk action category.</p>
+      </div>
+      <div class="tl-card orange">
+        <div class="tl-name"><span class="dotbig" style="background:var(--bw-status-warn)"></span>ORANGE</div>
+        <span class="when">Under-stocked — raise to avoid stockout</span>
+        <p class="what">Rec exceeds current, or current is mixed. Increase Min/Max — these are your stockout-risk parts. Highest priority.</p>
+      </div>
+      <div class="tl-card red">
+        <div class="tl-name"><span class="dotbig" style="background:var(--bw-status-crit)"></span>RED</div>
+        <span class="when">Wrong MRP type for the demand</span>
+        <p class="what">Currently PD (manual reorder) but consumes regularly. Convert to V1 with proper Min/Max — eliminates judgment calls on routine parts.</p>
+      </div>
+      <div class="tl-card wr">
+        <div class="tl-name"><span class="dotbig" style="background:var(--bw-wr)"></span>WR?</div>
+        <span class="when">Possible seasonal / winter-road</span>
+        <p class="what">PD with high stock and low recent draw. Likely seasonal. Planner reviews — could be appropriate as-is. Surfaced, not auto-changed.</p>
+      </div>
+      <div class="tl-card grey">
+        <div class="tl-name"><span class="dotbig" style="background:var(--bw-grey-300)"></span>GREY</div>
+        <span class="when">Insufficient data or out of scope</span>
+        <p class="what">No P2 activity, missing from Inventory Master, or unusual MRP type. Surfaced for manual review — never silently skipped.</p>
+      </div>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:10.5px;color:var(--bw-grey-200);margin-top:22px;letter-spacing:1px;text-transform:uppercase">Logic is deterministic and priority-ordered — every line gets exactly one light, no overlaps, no inference.</p>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">07 / 11</div>
+</section>
+
+<!-- ============== SLIDE 8 — DELIVERABLES ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">What you receive</div>
+    <h2 class="h2" style="margin-top:6px">Four deliverables, one engagement.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="del-grid">
+      <div class="del">
+        <span class="badge">01 · Per-fleet workbook</span>
+        <h4>Excel Analysis Pack</h4>
+        <p>One workbook per fleet model. Index sheet with every qualifying material on one screen — current Min/Max, recommended Min/Max, traffic light, action.</p>
+        <ul>
+          <li>Per-material sheet with embedded consumption chart</li>
+          <li>HCE event tables with WO descriptions</li>
+          <li>Adjusted P2 rate displayed alongside raw — planner chooses</li>
+        </ul>
+      </div>
+      <div class="del">
+        <span class="badge">02 · Single-file dashboard</span>
+        <h4>Interactive HTML Dashboard</h4>
+        <p>Browser-based, no install. Filterable by traffic light and fleet model. Sortable, searchable. The planner's working surface.</p>
+        <ul>
+          <li>Cross-fleet summary matrix · per-model tabs</li>
+          <li>HCE accordion linking back to source work orders</li>
+          <li>Multi-model materials in their own dedicated view</li>
+        </ul>
+      </div>
+      <div class="del">
+        <span class="badge">03 · Action list</span>
+        <h4>Prioritized Triage</h4>
+        <p>The Red and Orange parts ranked by stockout exposure and capital impact. The first ninety days of work, scoped and sequenced.</p>
+        <ul>
+          <li>RED parts → MRP type conversion plan (PD → V1)</li>
+          <li>ORANGE parts → Min/Max increase, ranked by criticality</li>
+          <li>BLUE parts → working-capital release opportunities</li>
+        </ul>
+      </div>
+      <div class="del">
+        <span class="badge">04 · Multi-model treatment</span>
+        <h4>Cross-fleet Shared Stock</h4>
+        <p>Parts consumed by more than one fleet model are detected up front and analysed separately, so you don't double-count or under-set on shared SKUs.</p>
+        <ul>
+          <li>Materials qualifying on 2+ models flagged automatically</li>
+          <li>Combined consumption rate · separate MULTI tab in dashboard</li>
+          <li>One Min/Max recommendation that holds across the whole fleet</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">08 / 11</div>
+</section>
+
+<!-- ============== SLIDE 9 — PROCESS ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">The process</div>
+    <h2 class="h2" style="margin-top:6px">Four gates. Operator review at every step.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <p style="font-family:var(--font-body);font-size:15px;color:var(--bw-grey-100);max-width:900px;line-height:1.55">
+      Every gate produces a checkpoint output before the next one runs — so a data issue early stops the train, not blow up at the end. Nothing is hidden, nothing is interpolated, nothing is "smart-filled."
+    </p>
+    <div class="flow">
+      <div class="gate">
+        <span class="gnum">Gate 01</span>
+        <h5>Data Quality</h5>
+        <p>Validates MB51 date range, IW39 work-order coverage, Inventory Master coverage. Flags case-sensitivity duplicates, missing months, reconciliation drift.</p>
+        <span class="gtag">≥ 12 mo MB51 history · IW39 join check</span>
+      </div>
+      <div class="gate">
+        <span class="gnum">Gate 02</span>
+        <h5>Per-Model Extract</h5>
+        <p>Filters to fleet work orders only. Nets 261 / 201 (issue) against 262 / 202 (return). Materials consumed across multiple models routed to MULTI for separate handling.</p>
+        <span class="gtag">CSV per model · MULTI bucket</span>
+      </div>
+      <div class="gate">
+        <span class="gnum">Gate 03</span>
+        <h5>Charts &amp; HCE</h5>
+        <p>Period rates calculated. Charts generated with WO annotations. High Consumption Events detected and tabled. Lumpy / smooth pattern classified per material.</p>
+        <span class="gtag">Excel + chart per material</span>
+      </div>
+      <div class="gate">
+        <span class="gnum">Gate 04</span>
+        <h5>MRP Recommendations</h5>
+        <p>Recommended Min = P2 rate × min months, Max = P2 rate × max months. Six-light triage with action text. Dashboard rebuilt automatically.</p>
+        <span class="gtag">Workbook · dashboard · action list</span>
+      </div>
+    </div>
+    <div class="flow-foot">Outputs at every gate. No black boxes. Operator confirms before each next step.</div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">09 / 11</div>
+</section>
+
+<!-- ============== SLIDE 10 — WHAT WE NEED ============== -->
+<section class="slide">
+  <div class="titlebar">
+    <div class="eyebrow">What we need from you</div>
+    <h2 class="h2" style="margin-top:6px">Four files. Two weeks. One workshop to hand over.</h2>
+    <div class="accent"></div>
+  </div>
+  <div class="content">
+    <div class="need-grid">
+      <div>
+        <span class="label" style="display:block;margin-bottom:8px">Required data — standard SAP exports</span>
+        <table class="need-tbl">
+          <thead>
+            <tr><th>File</th><th>From</th><th>Window</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="fname">MB51</td><td>Material movements</td><td>≥ 12 months</td><td>Real consumption history — 261, 262, 201, 202</td></tr>
+            <tr><td class="fname">IW39</td><td>Work order list</td><td>Same window</td><td>Lets us count fleet WO consumption only</td></tr>
+            <tr><td class="fname">Fleet Master</td><td>Equipment list</td><td>Current</td><td>Sort field → equipment unit → model rollup</td></tr>
+            <tr><td class="fname">Inventory Master</td><td>Stock & MRP</td><td>Current</td><td>Tot OH, MRP type, current Min/Max</td></tr>
+          </tbody>
+        </table>
+        <p style="font-family:var(--font-mono);font-size:10.5px;color:var(--bw-grey-200);margin-top:12px;letter-spacing:1px;text-transform:uppercase;line-height:1.55">
+          Consumables track is similar — MB51 + scope file + Inventory Master. No IW39 / Fleet Master required.
+        </p>
+      </div>
+      <div class="need-side">
+        <span class="label">Engagement shape</span>
+        <h4>Two-week sprint per fleet</h4>
+        <p>Files in week one. Gate-by-gate review with your supply team in week two. Hand-over workshop at the end — your planners drive the dashboard themselves from day one.</p>
+        <div class="timeline">
+          <div class="ph">
+            <span class="phn">Week 1</span>
+            <div class="phl">Data + Quality</div>
+            <span class="phd">Gates 1–2</span>
+          </div>
+          <div class="ph">
+            <span class="phn">Week 2 ·</span>
+            <div class="phl">Charts + MRP</div>
+            <span class="phd">Gates 3–4</span>
+          </div>
+          <div class="ph">
+            <span class="phn">Hand-over</span>
+            <div class="phl">Workshop</div>
+            <span class="phd">Live walk-through</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">10 / 11</div>
+</section>
+
+<!-- ============== SLIDE 11 — CLOSE ============== -->
+<section class="slide s-close">
+  <div class="wrap">
+    <div class="eyebrow" style="font-size:13px;letter-spacing:3px;margin-bottom:18px">Next steps</div>
+    <h1>Birchwood<br/>Advisory</h1>
+    <div class="tag">Mobile Mining Equipment &amp; Technology Advisory</div>
+    <div class="divider"></div>
+    <div class="nextrow">
+      <div class="blk">
+        <span class="label">Start with</span>
+        <div class="v">A 30-minute scoping call to confirm fleet boundaries, MRP types in scope, and review windows.</div>
+      </div>
+      <div class="blk">
+        <span class="label">Pilot scope</span>
+        <div class="v">One fleet model — typically your highest-spend or highest-stockout class — as a proof point before broader rollout.</div>
+      </div>
+      <div class="blk">
+        <span class="label">Contact</span>
+        <div class="v mono">advisory@birchwood<br/>+ direct line on request</div>
+      </div>
+    </div>
+  </div>
+  <div class="brandtag">Birchwood Advisory · Inventory Optimization</div>
+  <div class="pagenum">11 / 11</div>
+</section>
+
+<div class="nav-help">PRESS <span>F11</span> FOR FULLSCREEN  ·  <span>CTRL+P</span> TO EXPORT PDF</div>
+
+</body>
+</html>
