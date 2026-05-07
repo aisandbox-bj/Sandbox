@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-src blob:;">
+<title>Sandbox — Dashboards &amp; Analyses</title>
+<style>
+  :root {
+    --bg-base: #0f1117;
+    --bg-surface: #1a1f2e;
+    --bg-raised: #232a3b;
+    --bg-deep: #141820;
+    --border-subtle: #1e2535;
+    --border-base: #2a3347;
+    --border-strong: #3a4457;
+    --text-primary: #e6eaf2;
+    --text-secondary: #c0cadb;
+    --text-muted: #8a9ab5;
+    --text-faint: #5a6a85;
+    --gold: #D6A70C;
+    --gold-soft: #c0a840;
+    --green: #34c97a;
+    --amber: #f0b429;
+    --red: #f05252;
+    --blue: #5b9cf6;
+    --violet: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(180deg, #141820 0%, #1a1f2e 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 22px 40px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .title-block h1 {
+    font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+  }
+  .title-block h1 .gold { color: var(--gold); }
+  .title-block p {
+    font-size: 12px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.3px;
+  }
+  .header-right { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-faint); }
+  .header-badge {
+    padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border-base);
+    background: var(--bg-deep); color: var(--text-muted); font-size: 11px;
+  }
+
+  /* MAIN */
+  main { flex: 1; padding: 32px 40px 60px; max-width: 1280px; margin: 0 auto; width: 100%; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, rgba(214,167,12,0.08), rgba(91,156,246,0.04));
+    border: 1px solid var(--border-base); border-radius: 10px;
+    padding: 28px 32px; margin-bottom: 28px;
+  }
+  .hero .kicker {
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;
+  }
+  .hero h2 {
+    font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  .hero p { font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 880px; }
+
+  /* SECTION HEADING */
+  h3.section {
+    font-size: 15px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 24px 0 16px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-base);
+  }
+
+  /* CARD GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+  }
+
+  .launch-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-base);
+    border-radius: 8px;
+    padding: 22px 22px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    display: flex; flex-direction: column; gap: 12px;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    width: 100%;
+    position: relative;
+  }
+  .launch-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  }
+  .launch-card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .launch-card .pill-row {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .launch-card h4 {
+    font-size: 16px; font-weight: 700; color: #fff;
+    letter-spacing: 0.2px;
+  }
+  .launch-card p {
+    font-size: 13px; color: var(--text-secondary); flex: 1;
+  }
+  .launch-card .open-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .launch-card .open-row .arrow {
+    color: var(--gold); font-weight: 700; transition: transform 0.15s;
+  }
+  .launch-card:hover .open-row .arrow { transform: translateX(3px); }
+
+  .launch-card.coming-soon { opacity: 0.65; cursor: not-allowed; }
+  .launch-card.coming-soon:hover { transform: none; box-shadow: none; border-color: var(--border-base); }
+
+  /* PILLS */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .pill-green { background: rgba(52,201,122,0.15); color: var(--green); border: 1px solid rgba(52,201,122,0.3); }
+  .pill-gold  { background: rgba(214,167,12,0.15); color: var(--gold);  border: 1px solid rgba(214,167,12,0.3); }
+  .pill-muted { background: var(--bg-raised); color: var(--text-muted); border: 1px solid var(--border-base); }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(8,10,16,0.78);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 28px 30px 24px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal h3 {
+    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px;
+  }
+  .modal .modal-sub {
+    font-size: 12px; color: var(--text-muted); margin-bottom: 18px;
+  }
+  .modal .modal-sub strong { color: var(--gold); }
+  .modal label {
+    display: block; font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .modal input[type="password"] {
+    width: 100%;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-base);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .modal input[type="password"]:focus {
+    outline: none; border-color: var(--gold);
+  }
+  .modal .err {
+    font-size: 12px; color: var(--red); margin-top: 8px; min-height: 16px;
+  }
+  .modal-actions {
+    display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;
+  }
+  .btn {
+    background: var(--bg-raised);
+    color: var(--text-primary);
+    border: 1px solid var(--border-base);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--border-strong); }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg-base);
+    border-color: var(--gold);
+  }
+  .btn-primary:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+  .btn-primary:disabled {
+    background: var(--bg-raised); color: var(--text-faint);
+    border-color: var(--border-base);
+    cursor: wait;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 18px 20px;
+    font-size: 11px;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 16px 20px; }
+    main { padding: 20px 20px 40px; }
+    .hero { padding: 22px 22px; }
+    .hero h2 { font-size: 22px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1><span class="gold">Sandbox</span> — Dashboards &amp; Analyses</h1>
+    <p>A small showcase of work, shared with friends and family.</p>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">v1.0</span>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="kicker">Welcome</div>
+    <h2>Pick something to explore</h2>
+    <p>Public items open right away. Private items ask for a passphrase first — they're encrypted, so the file itself can't be read without it.</p>
+  </section>
+
+  <h3 class="section">Available</h3>
+
+  <div id="grid" class="grid"><!-- populated by JS --></div>
+
+</main>
+
+<div id="modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <h3 id="modal-title">Passphrase required</h3>
+    <p class="modal-sub">Enter the passphrase to open <strong id="modal-target">—</strong>.</p>
+    <form id="pin-form" autocomplete="off">
+      <label for="pin-input">Passphrase</label>
+      <input type="password" id="pin-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+      <div id="pin-err" class="err"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="pin-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="pin-submit">Unlock</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>Generated locally · No analytics · No external scripts</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- Dashboard registry ----------
+  // To add a public dashboard: drop the .html under /dashboards/, add an entry below.
+  // To add a private dashboard: encrypt with /tools/encrypt.html, drop the .enc.json
+  //   under /private/, add an entry below with type:'private'.
+  const DASHBOARDS = [
+    {
+      slug: 'family-office',
+      title: 'Family Office Showcase',
+      description: 'Overview of what a small family office services platform could look like — services, tiers, and example dashboards.',
+      type: 'public',
+      href: './dashboards/family-office.html',
+      tags: ['Showcase']
+    }
+    // Example private entry (uncomment after producing the .enc.json):
+    // {
+    //   slug: 'bd402',
+    //   title: 'BD402 Parts Readiness',
+    //   description: 'Component readiness, lead-time, and risk view for the BD402 fleet rebuild.',
+    //   type: 'private',
+    //   href: './private/bd402.enc.json',
+    //   tags: ['Operations']
+    // }
+  ];
+
+  // ---------- DOM refs ----------
+  const grid     = document.getElementById('grid');
+  const modal    = document.getElementById('modal');
+  const modalTgt = document.getElementById('modal-target');
+  const form     = document.getElementById('pin-form');
+  const input    = document.getElementById('pin-input');
+  const errBox   = document.getElementById('pin-err');
+  const cancelBtn= document.getElementById('pin-cancel');
+  const submitBtn= document.getElementById('pin-submit');
+
+  // ---------- Lockout state ----------
+  const LOCKOUT_KEY  = 'sandbox-lockout';
+  const ATTEMPTS_KEY = 'sandbox-attempts';
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_MS   = 30000;
+
+  // ---------- Render the grid ----------
+  function render() {
+    grid.innerHTML = '';
+    if (DASHBOARDS.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'color:var(--text-muted);padding:20px;font-size:13px;';
+      empty.textContent = 'No dashboards yet. Check back soon.';
+      grid.appendChild(empty);
+      return;
+    }
+    for (const d of DASHBOARDS) {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'launch-card';
+      card.setAttribute('data-slug', d.slug);
+
+      const pillRow = document.createElement('div');
+      pillRow.className = 'pill-row';
+      const typePill = document.createElement('span');
+      if (d.type === 'public') {
+        typePill.className = 'pill pill-green';
+        typePill.textContent = 'Public';
+      } else {
+        typePill.className = 'pill pill-gold';
+        typePill.textContent = '🔒 Private';
+      }
+      pillRow.appendChild(typePill);
+      if (Array.isArray(d.tags)) {
+        for (const t of d.tags) {
+          const p = document.createElement('span');
+          p.className = 'pill pill-muted';
+          p.textContent = t;
+          pillRow.appendChild(p);
+        }
+      }
+
+      const title = document.createElement('h4');
+      title.textContent = d.title;
+
+      const desc = document.createElement('p');
+      desc.textContent = d.description;
+
+      const openRow = document.createElement('div');
+      openRow.className = 'open-row';
+      const openLabel = document.createElement('span');
+      openLabel.textContent = d.type === 'public' ? 'Open' : 'Unlock';
+      const arrow = document.createElement('span');
+      arrow.className = 'arrow';
+      arrow.textContent = '→';
+      openRow.appendChild(openLabel);
+      openRow.appendChild(arrow);
+
+      card.appendChild(pillRow);
+      card.appendChild(title);
+      card.appendChild(desc);
+      card.appendChild(openRow);
+
+      card.addEventListener('click', () => onCardClick(d));
+      grid.appendChild(card);
+    }
+  }
+
+  // ---------- Card click router ----------
+  function onCardClick(d) {
+    if (d.type === 'public') {
+      window.location.href = d.href;
+      return;
+    }
+    if (d.type === 'private') {
+      openModal(d);
+      return;
+    }
+  }
+
+  // ---------- Modal ----------
+  let currentTarget = null;
+
+  function openModal(d) {
+    currentTarget = d;
+    modalTgt.textContent = d.title;
+    errBox.textContent = '';
+    input.value = '';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Unlock';
+    modal.classList.add('open');
+    setTimeout(() => input.focus(), 50);
+    refreshLockoutUI();
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    currentTarget = null;
+    input.value = '';
+    errBox.textContent = '';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Unlock';
+  }
+
+  cancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  // ---------- Lockout helpers ----------
+  function isLockedOut() {
+    const until = parseInt(sessionStorage.getItem(LOCKOUT_KEY) || '0', 10);
+    return until > Date.now();
+  }
+  function lockoutRemaining() {
+    const until = parseInt(sessionStorage.getItem(LOCKOUT_KEY) || '0', 10);
+    return Math.max(0, until - Date.now());
+  }
+  function recordAttemptFailure() {
+    const n = parseInt(sessionStorage.getItem(ATTEMPTS_KEY) || '0', 10) + 1;
+    sessionStorage.setItem(ATTEMPTS_KEY, String(n));
+    if (n >= MAX_ATTEMPTS) {
+      sessionStorage.setItem(LOCKOUT_KEY, String(Date.now() + LOCKOUT_MS));
+      sessionStorage.setItem(ATTEMPTS_KEY, '0');
+    }
+  }
+  function clearAttempts() {
+    sessionStorage.removeItem(ATTEMPTS_KEY);
+    sessionStorage.removeItem(LOCKOUT_KEY);
+  }
+  function refreshLockoutUI() {
+    if (!isLockedOut()) return;
+    const tick = () => {
+      const ms = lockoutRemaining();
+      if (ms <= 0) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Unlock';
+        errBox.textContent = '';
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Locked';
+      errBox.textContent = `Too many attempts. Try again in ${Math.ceil(ms / 1000)}s.`;
+      setTimeout(tick, 500);
+    };
+    tick();
+  }
+
+  // ---------- Crypto ----------
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  async function deriveKey(passphrase, saltBytes, iterations) {
+    const enc = new TextEncoder();
+    const baseKey = await crypto.subtle.importKey(
+      'raw', enc.encode(passphrase),
+      { name: 'PBKDF2' }, false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: saltBytes, iterations: iterations, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['decrypt']
+    );
+  }
+
+  async function fetchEnvelope(href) {
+    const res = await fetch(href, { cache: 'no-cache' });
+    if (!res.ok) {
+      if (res.status === 404) {
+        const err = new Error('not-found');
+        err.code = 'NOT_FOUND';
+        throw err;
+      }
+      throw new Error(`Failed to load encrypted file (${res.status})`);
+    }
+    const env = await res.json();
+    if (!env || env.alg !== 'AES-GCM' || env.kdf !== 'PBKDF2-SHA256') {
+      throw new Error('Unrecognized encryption envelope');
+    }
+    return env;
+  }
+
+  async function decryptHtml(env, passphrase) {
+    const salt   = b64ToBytes(env.salt);
+    const iv     = b64ToBytes(env.iv);
+    const cipher = b64ToBytes(env.ciphertext);
+    const iter   = env.iterations || 600000;
+    const key    = await deriveKey(passphrase, salt, iter);
+    const plain  = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, cipher);
+    return new TextDecoder('utf-8').decode(plain);
+  }
+
+  function openHtmlInThisTab(html) {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    // Free the URL once we leave (back button still works because the blob is held by the new page).
+    window.addEventListener('pagehide', () => { try { URL.revokeObjectURL(url); } catch (_) {} }, { once: true });
+    window.location.assign(url);
+  }
+
+  // ---------- Form submission ----------
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentTarget) return;
+    if (isLockedOut()) { refreshLockoutUI(); return; }
+
+    const pass = input.value;
+    if (!pass) { errBox.textContent = 'Enter the passphrase.'; return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Unlocking…';
+    errBox.textContent = '';
+
+    try {
+      const env = await fetchEnvelope(currentTarget.href);
+      const html = await decryptHtml(env, pass);
+      clearAttempts();
+      openHtmlInThisTab(html);
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Unlock';
+      if (err && err.code === 'NOT_FOUND') {
+        errBox.textContent = 'This dashboard isn’t available yet. Check back soon.';
+      } else if (err && (err.name === 'OperationError' || /decrypt|operation/i.test(String(err.message || '')))) {
+        recordAttemptFailure();
+        if (isLockedOut()) {
+          refreshLockoutUI();
+        } else {
+          errBox.textContent = 'Incorrect passphrase.';
+          input.select();
+        }
+      } else {
+        errBox.textContent = 'Couldn’t open: ' + (err && err.message ? err.message : 'unknown error');
+      }
+    }
+  });
+
+  // ---------- Init ----------
+  render();
+})();
+</script>
+
+</body>
+</html>

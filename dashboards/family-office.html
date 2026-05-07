@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Office — Overview &amp; What We Can Build</title>
+<style>
+  :root {
+    --bg-base: #0f1117;
+    --bg-surface: #1a1f2e;
+    --bg-raised: #232a3b;
+    --bg-deep: #141820;
+    --border-subtle: #1e2535;
+    --border-base: #2a3347;
+    --border-strong: #3a4457;
+    --text-primary: #e6eaf2;
+    --text-secondary: #c0cadb;
+    --text-muted: #8a9ab5;
+    --text-faint: #5a6a85;
+    --gold: #D6A70C;
+    --gold-soft: #c0a840;
+    --green: #34c97a;
+    --amber: #f0b429;
+    --red: #f05252;
+    --blue: #5b9cf6;
+    --violet: #a78bfa;
+    --tab-bar-h: 52px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(180deg, #141820 0%, #1a1f2e 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 22px 40px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px;
+  }
+  .title-block h1 {
+    font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+  }
+  .title-block h1 .gold { color: var(--gold); }
+  .title-block p {
+    font-size: 12px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.3px;
+  }
+  .header-right { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--text-faint); }
+  .header-badge {
+    padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border-base);
+    background: var(--bg-deep); color: var(--text-muted); font-size: 11px;
+  }
+
+  /* TAB BAR — sticky */
+  .tab-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-base);
+    display: flex; align-items: stretch;
+    overflow-x: auto; scrollbar-width: thin;
+    padding: 0 20px;
+    height: var(--tab-bar-h);
+  }
+  .tab-btn {
+    background: transparent; border: none; color: var(--text-muted);
+    padding: 0 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-bottom: 3px solid transparent; transition: all 0.15s;
+    white-space: nowrap; letter-spacing: 0.2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tab-btn:hover { color: var(--text-secondary); }
+  .tab-btn.active {
+    color: var(--gold); border-bottom-color: var(--gold);
+    background: linear-gradient(180deg, rgba(214,167,12,0.06), transparent);
+  }
+  .tab-btn .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--bg-raised); color: var(--text-faint);
+    font-size: 10px; font-weight: 700;
+  }
+  .tab-btn.active .num { background: var(--gold); color: var(--bg-base); }
+
+  /* PANELS */
+  .panel { display: none; padding: 32px 40px 60px; max-width: 1280px; margin: 0 auto; }
+  .panel.active { display: block; }
+  .panel h2 {
+    font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 6px;
+    letter-spacing: 0.2px;
+  }
+  .panel h2 .accent { color: var(--gold); }
+  .panel .sub {
+    font-size: 13px; color: var(--text-muted); margin-bottom: 24px;
+    max-width: 900px; line-height: 1.6;
+  }
+  .panel h3 {
+    font-size: 15px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 32px 0 14px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-base);
+  }
+  .panel h4 {
+    font-size: 14px; font-weight: 700; color: var(--text-primary);
+    margin: 20px 0 8px;
+  }
+  .panel p { color: var(--text-secondary); margin-bottom: 12px; }
+  .panel ul { list-style: none; margin-bottom: 16px; }
+  .panel ul li {
+    color: var(--text-secondary); padding: 4px 0 4px 20px; position: relative;
+  }
+  .panel ul li::before {
+    content: '▸'; position: absolute; left: 4px; color: var(--gold);
+    font-size: 10px; top: 7px;
+  }
+  .panel ol { margin-bottom: 16px; padding-left: 22px; color: var(--text-secondary); }
+  .panel ol li { padding: 3px 0; }
+
+  /* CARD GRID */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-base);
+    border-radius: 8px;
+    padding: 20px 22px;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .card:hover { border-color: var(--border-strong); }
+  .card .card-tag {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--gold);
+    padding: 3px 8px; background: rgba(214,167,12,0.1);
+    border-radius: 10px; margin-bottom: 10px;
+  }
+  .card h4 { margin: 0 0 10px; font-size: 15px; color: #fff; }
+  .card p { font-size: 13px; margin-bottom: 10px; color: var(--text-secondary); }
+  .card ul li { font-size: 12.5px; }
+
+  /* KPI / STAT cards */
+  .stat {
+    background: var(--bg-surface); border: 1px solid var(--border-base);
+    border-radius: 8px; padding: 18px 20px; text-align: left;
+  }
+  .stat .label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted); font-weight: 700;
+  }
+  .stat .value {
+    font-size: 26px; font-weight: 700; color: var(--gold);
+    margin: 6px 0 4px;
+  }
+  .stat .delta { font-size: 11px; color: var(--text-faint); }
+
+  /* TABLES */
+  table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+    background: var(--bg-surface); border-radius: 6px; overflow: hidden;
+    font-size: 13px;
+  }
+  th {
+    background: var(--bg-deep); color: var(--gold);
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-base);
+  }
+  td {
+    padding: 10px 14px; color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(214,167,12,0.03); }
+  td strong { color: var(--text-primary); }
+
+  /* PILLS */
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; margin-right: 4px;
+  }
+  .pill-green { background: rgba(52,201,122,0.15); color: var(--green); border: 1px solid rgba(52,201,122,0.3); }
+  .pill-amber { background: rgba(240,180,41,0.15); color: var(--amber); border: 1px solid rgba(240,180,41,0.3); }
+  .pill-red   { background: rgba(240,82,82,0.15);  color: var(--red);   border: 1px solid rgba(240,82,82,0.3); }
+  .pill-blue  { background: rgba(91,156,246,0.15); color: var(--blue);  border: 1px solid rgba(91,156,246,0.3); }
+  .pill-gold  { background: rgba(214,167,12,0.15); color: var(--gold);  border: 1px solid rgba(214,167,12,0.3); }
+  .pill-violet{ background: rgba(167,139,250,0.15);color: var(--violet);border: 1px solid rgba(167,139,250,0.3); }
+
+  /* CALLOUTS */
+  .callout {
+    background: var(--bg-deep); border-left: 3px solid var(--gold);
+    padding: 14px 18px; margin: 16px 0; border-radius: 0 6px 6px 0;
+    color: var(--text-secondary); font-size: 13px;
+  }
+  .callout strong { color: var(--gold); }
+  .callout.warn { border-left-color: var(--red); }
+  .callout.warn strong { color: var(--red); }
+  .callout.note { border-left-color: var(--blue); }
+  .callout.note strong { color: var(--blue); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, rgba(214,167,12,0.08), rgba(91,156,246,0.04));
+    border: 1px solid var(--border-base); border-radius: 10px;
+    padding: 28px 32px; margin-bottom: 28px;
+  }
+  .hero .kicker {
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;
+  }
+  .hero h1 {
+    font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  .hero p { font-size: 15px; line-height: 1.6; color: var(--text-secondary); max-width: 880px; }
+
+  /* TIMELINE */
+  .tier-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    margin: 18px 0;
+  }
+  .tier {
+    background: var(--bg-surface); border: 1px solid var(--border-base);
+    border-radius: 8px; padding: 18px 20px;
+  }
+  .tier .range {
+    font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+  }
+  .tier .name {
+    font-size: 18px; font-weight: 700; color: var(--gold);
+    margin: 6px 0 10px;
+  }
+  .tier .budget {
+    font-size: 12px; color: var(--text-faint); margin-top: 10px;
+    padding-top: 10px; border-top: 1px solid var(--border-subtle);
+  }
+  .tier .budget strong { color: var(--text-primary); }
+
+  /* BUILD CARDS (What We Can Build) */
+  .build-card {
+    background: var(--bg-surface); border: 1px solid var(--border-base);
+    border-radius: 8px; padding: 18px 22px 20px; position: relative;
+  }
+  .build-card .bc-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px; gap: 12px;
+  }
+  .build-card h4 { margin: 0; font-size: 15px; color: #fff; }
+  .build-card .effort {
+    font-size: 10px; font-weight: 700; padding: 3px 8px;
+    border-radius: 10px; white-space: nowrap;
+  }
+  .build-card .body { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
+  .build-card .meta {
+    display: grid; grid-template-columns: 1fr; gap: 6px;
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-subtle);
+    font-size: 11.5px;
+  }
+  .build-card .meta .mrow { display: flex; gap: 8px; }
+  .build-card .meta .mlabel {
+    color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px;
+    font-weight: 700; font-size: 10px; min-width: 78px; padding-top: 1px;
+  }
+  .build-card .meta .mval { color: var(--text-secondary); }
+
+  /* CALCULATOR */
+  .calc {
+    background: var(--bg-surface); border: 1px solid var(--border-base);
+    border-radius: 8px; padding: 22px 26px; margin: 18px 0;
+  }
+  .calc-row {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .calc-row label {
+    font-size: 12px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px; min-width: 140px;
+  }
+  .calc-row input[type=range] {
+    flex: 1; min-width: 220px;
+    accent-color: var(--gold);
+  }
+  .calc-row .calc-val {
+    font-size: 18px; font-weight: 700; color: var(--gold);
+    min-width: 110px; text-align: right; font-variant-numeric: tabular-nums;
+  }
+  .calc-output {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin-top: 18px; padding-top: 18px;
+    border-top: 1px solid var(--border-base);
+  }
+  .calc-output .stat .value { font-size: 22px; }
+
+  /* INFERENCE FLAG */
+  .inference {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 8px; background: rgba(167,139,250,0.15);
+    color: var(--violet); border: 1px solid rgba(167,139,250,0.3);
+    margin-left: 6px; letter-spacing: 0.5px; text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 28px 40px; border-top: 1px solid var(--border-base);
+    font-size: 11px; color: var(--text-faint);
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+  }
+  footer a { color: var(--text-muted); }
+
+  /* PRINT */
+  @media print {
+    .tab-bar, header .header-right { display: none; }
+    .panel { display: block !important; page-break-after: always; }
+  }
+
+  @media (max-width: 720px) {
+    .tier-row { grid-template-columns: 1fr; }
+    .panel { padding: 24px 20px 40px; }
+    header { padding: 16px 20px; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1>The <span class="gold">Family Office</span> &mdash; What It Is, Where the Gaps Are, What We Can Build</h1>
+    <p>A walkthrough for the curious, drawn from Hein du Toit&rsquo;s notes &middot; dark-theme edition</p>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">v1.0</span>
+    <span class="header-badge">April 2026</span>
+  </div>
+</header>
+
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="overview"><span class="num">1</span> Overview</button>
+  <button class="tab-btn" data-tab="types"><span class="num">2</span> Types</button>
+  <button class="tab-btn" data-tab="pillars"><span class="num">3</span> Four Pillars</button>
+  <button class="tab-btn" data-tab="middle"><span class="num">4</span> The Forgotten Middle</button>
+  <button class="tab-btn" data-tab="landscape"><span class="num">5</span> Landscape &amp; Players</button>
+  <button class="tab-btn" data-tab="opportunities"><span class="num">6</span> Opportunities</button>
+  <button class="tab-btn" data-tab="build"><span class="num">7</span> What We Can Build</button>
+</nav>
+
+<!-- ══════════════════════════ TAB 1: OVERVIEW ══════════════════════════ -->
+<section class="panel active" id="panel-overview">
+  <div class="hero">
+    <div class="kicker">The one-line definition</div>
+    <h1>A family office is a private corporation whose sole client is one family&mdash;or a small group of them&mdash;handling everything from portfolios to private jets.</h1>
+    <p>It&rsquo;s the &ldquo;complete outsourced solution&rdquo; for a family&rsquo;s financial and personal life. Think of it less as wealth management and more as running a company whose only KPI is: <em>don&rsquo;t let the money, the family, or the reputation go sideways</em>. Historically it&rsquo;s been the preserve of the Rockefellers of the world. The interesting story in 2026 is what happens when you try to bring the same discipline to the <strong>$1M&ndash;$50M</strong> bracket without the $3M/yr price tag.</p>
+  </div>
+
+  <h3>The 2026 Headline Numbers</h3>
+  <div class="grid grid-4">
+    <div class="stat">
+      <div class="label">Projected global family wealth by 2030</div>
+      <div class="value">$9.5T</div>
+      <div class="delta">+189% growth 2019&ndash;2030 (Deloitte)</div>
+    </div>
+    <div class="stat">
+      <div class="label">Average SFO run-rate</div>
+      <div class="value">$3.2M/yr</div>
+      <div class="delta">60&ndash;70% of that is personnel</div>
+    </div>
+    <div class="stat">
+      <div class="label">JPM benchmark panel</div>
+      <div class="value">333</div>
+      <div class="delta">Family offices across 30 countries</div>
+    </div>
+    <div class="stat">
+      <div class="label">Women in principal leadership</div>
+      <div class="value">15%</div>
+      <div class="delta">And rising &mdash; demographic shift (Deloitte)</div>
+    </div>
+  </div>
+
+  <h3>Why the concept exists</h3>
+  <p>A retail private bank sells you products. A family office sells you <em>alignment</em>. Every person on staff is loyal solely to the family, which removes the upselling conflict that quietly drains 1&ndash;2% of return every year in the retail channel. You also get:</p>
+  <ul>
+    <li><strong>Privacy &amp; control</strong> &mdash; decisions happen in one room; no compliance tap on the shoulder.</li>
+    <li><strong>Intergenerational continuity</strong> &mdash; educating the next generation so they don&rsquo;t evaporate the capital on yachts and bad co-invests.</li>
+    <li><strong>Coordinated execution</strong> &mdash; tax, legal, investment, insurance, philanthropy, and lifestyle all pulling in the same direction instead of invoicing separately.</li>
+  </ul>
+
+  <h3>Why it&rsquo;s hard</h3>
+  <ul>
+    <li><strong>Cost</strong> &mdash; below $100M in assets, a full SFO is a luxury tax on yourself. Above $500M it gets efficient (0.6&ndash;1.0% of assets).</li>
+    <li><strong>Key-man risk</strong> &mdash; one trusted advisor tends to end up holding all the institutional memory. When they retire, so does the family&rsquo;s operating system.</li>
+    <li><strong>Cybersecurity</strong> &mdash; high-net-worth families are catnip to AI-driven phishing. 2026&rsquo;s threats aren&rsquo;t the 2016 threats.</li>
+    <li><strong>Family conflict</strong> &mdash; the most common cause of wealth destruction isn&rsquo;t the market. It&rsquo;s siblings.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>The interesting shift in 2026:</strong> family offices are behaving more like professional private-equity firms. Direct investing, thematic syndicates, co-investing across families, impact/ESG integrated with commercial capital rather than bolted on. The next generation is &ldquo;comfortable with direct deals&rdquo; in a way the founders weren&rsquo;t. That changes what the office has to be able to do.
+  </div>
+</section>
+
+<!-- ══════════════════════════ TAB 2: TYPES ══════════════════════════ -->
+<section class="panel" id="panel-types">
+  <h2>Four <span class="accent">Structural Archetypes</span></h2>
+  <p class="sub">The family office industry isn&rsquo;t monolithic. These four models trade off cost, privacy, and control in different ways. The right pick depends almost entirely on the asset base and the founder&rsquo;s tolerance for running a small business on top of their actual business.</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <span class="card-tag">SFO</span>
+      <h4>Single-Family Office</h4>
+      <p>A dedicated legal entity that manages the fortune and lifestyle of one family. Gold-standard privacy and control.</p>
+      <ul>
+        <li><strong>Cost:</strong> $3M&ndash;$10M/yr typical</li>
+        <li><strong>Minimum sensible AUM:</strong> ~$100M (advisors often say $250M+)</li>
+        <li><strong>Best for:</strong> Post-liquidity founders, multigenerational dynasties</li>
+        <li><strong>Headache:</strong> You&rsquo;re now running a small HR department</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-tag">MFO</span>
+      <h4>Multi-Family Office</h4>
+      <p>A commercial firm serving many families, sharing top-tier talent and infrastructure across clients.</p>
+      <ul>
+        <li><strong>Cost:</strong> Typically fee-based, 0.3&ndash;1.0% of AUM</li>
+        <li><strong>Minimum AUM:</strong> Varies &mdash; $10M at boutiques, $100M+ at Bessemer</li>
+        <li><strong>Best for:</strong> Families who want &ldquo;SFO-lite&rdquo; services without the overhead</li>
+        <li><strong>Trade-off:</strong> You are one client among many</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-tag">VFO</span>
+      <h4>Virtual Family Office</h4>
+      <p>A lean coordination layer &mdash; often a single Chief-of-Staff or software platform &mdash; orchestrating a network of outsourced specialists.</p>
+      <ul>
+        <li><strong>Cost:</strong> $50k&ndash;$500k/yr depending on scope</li>
+        <li><strong>Minimum AUM:</strong> $5M upwards</li>
+        <li><strong>Best for:</strong> The forgotten middle ($1M&ndash;$50M)</li>
+        <li><strong>The kicker:</strong> This is where software earns its keep</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-tag">Embedded</span>
+      <h4>Founder / Embedded Office</h4>
+      <p>After a liquidity event, the founder&rsquo;s operating-company staff handle their personal finances &mdash; often temporarily, often accidentally.</p>
+      <ul>
+        <li><strong>Cost:</strong> Hidden &mdash; bleeds into operating company</li>
+        <li><strong>Minimum AUM:</strong> Any</li>
+        <li><strong>Best for:</strong> Early post-exit, while things get figured out</li>
+        <li><strong>Risk:</strong> Governance chaos and co-mingling tax headaches</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Structural Picker &mdash; Quick Rule of Thumb</h3>
+  <table>
+    <thead><tr><th>Net Worth</th><th>Structural Fit</th><th>Typical Annual Cost</th><th>Staffing</th></tr></thead>
+    <tbody>
+      <tr><td>$1M&ndash;$10M</td><td>Hybrid Planner (fee-only RIA + software)</td><td>~$50k (1% of $5M)</td><td>Zero FTE &mdash; software + outsourced</td></tr>
+      <tr><td>$10M&ndash;$30M</td><td>Virtual Family Office (VFO)</td><td>$100k&ndash;$300k</td><td>Part-time Chief of Staff</td></tr>
+      <tr><td>$30M&ndash;$50M</td><td>Lean SFO</td><td>$300k&ndash;$500k</td><td>1 x Wealth Controller (CPA-level)</td></tr>
+      <tr><td>$50M&ndash;$100M</td><td>Lean SFO or MFO with upgraded tier</td><td>$500k&ndash;$1.5M</td><td>2&ndash;3 FTE</td></tr>
+      <tr><td>$100M&ndash;$500M</td><td>Full SFO</td><td>$2M&ndash;$3M (~2.0&ndash;2.5% of $100M, 0.6%+ at $500M)</td><td>5&ndash;12 FTE including CIO</td></tr>
+      <tr><td>$500M+</td><td>Full SFO &mdash; institutionalised</td><td>$3M&ndash;$10M+ (0.6&ndash;1.0% of assets)</td><td>12+ FTE</td></tr>
+    </tbody>
+  </table>
+  <div class="callout note"><strong>Note:</strong> numbers sourced from the JPM 2026 and maccelerator.la benchmarks in Hein&rsquo;s email. Actuals vary widely by geography, asset complexity, and lifestyle bloat.</div>
+</section>
+
+<!-- ══════════════════════════ TAB 3: FOUR PILLARS ══════════════════════════ -->
+<section class="panel" id="panel-pillars">
+  <h2>The Four <span class="accent">Pillars</span> of the Operating Model</h2>
+  <p class="sub">Whichever structural archetype you pick, the same four pillars of work need to be done by someone. If you&rsquo;re under $50M these pillars still exist &mdash; they just get solved with software, part-time experts, and well-designed playbooks rather than an in-house CIO.</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <span class="card-tag">Pillar 1</span>
+      <h4>Investment Management</h4>
+      <p>The part everyone thinks a family office <em>is</em>. In reality it&rsquo;s maybe 30% of the workload.</p>
+      <ul>
+        <li>Strategic asset allocation &amp; rebalancing</li>
+        <li>Direct PE / VC deal flow and due diligence</li>
+        <li>Manager selection and oversight</li>
+        <li>Portfolio performance reporting (IRR, TVPI, DPI)</li>
+        <li>Co-invest and syndicate participation</li>
+        <li>Public markets execution and custody</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-tag">Pillar 2</span>
+      <h4>Financial &amp; Tax</h4>
+      <p>&ldquo;Tax alpha&rdquo; &mdash; saving 2% in tax is mathematically identical to earning 2% in the market, at zero risk. Quietly where the biggest wins live.</p>
+      <ul>
+        <li>Tax planning &amp; compliance (multi-jurisdiction)</li>
+        <li>Entity structural engineering (trusts, LLCs, holdcos)</li>
+        <li>Bill pay &amp; treasury operations</li>
+        <li>Consolidated bookkeeping across entities</li>
+        <li>Cash flow forecasting &amp; capital calls</li>
+        <li>K-1 consolidation &amp; prep support</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-tag">Pillar 3</span>
+      <h4>Governance &amp; Strategy</h4>
+      <p>The part everyone forgets until siblings stop speaking. Do this early.</p>
+      <ul>
+        <li>Succession &amp; estate planning</li>
+        <li>Family constitution / charter</li>
+        <li>Quarterly family meetings (yes, really)</li>
+        <li>Next-gen education programmes</li>
+        <li>Philanthropic strategy &amp; foundations</li>
+        <li>Decision rights &amp; voting structures</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="card-tag">Pillar 4</span>
+      <h4>Lifestyle &amp; Concierge</h4>
+      <p>Only relevant above ~$25M in assets. The glamour page of the brochure, usually the smallest line item in the budget.</p>
+      <ul>
+        <li>Private aviation &amp; travel coordination</li>
+        <li>Property / estate management &amp; staffing</li>
+        <li>Personal security &amp; cyber hardening</li>
+        <li>Health coordination &amp; concierge medicine</li>
+        <li>Collectibles (art, cars, wine) logistics</li>
+        <li>Household payroll &amp; compliance</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Cross-Cutting: Risk Management</h3>
+  <p>Not strictly a pillar &mdash; more of a foundation underneath all four. The 2026 risk register for family offices has eight named categories (per Canadian Family Offices): cybersecurity, geopolitical, regulatory, family conflict, key-man dependency, counterparty, insurance gaps, and reputational exposure. The cheapest family-office service you can buy is a high-limit umbrella insurance policy.</p>
+</section>
+
+<!-- ══════════════════════════ TAB 4: FORGOTTEN MIDDLE ══════════════════════════ -->
+<section class="panel" id="panel-middle">
+  <h2>The <span class="accent">&ldquo;Forgotten Middle&rdquo;</span> &mdash; $1M to $50M</h2>
+  <p class="sub">The traditional SFO model is financially impossible here. A $3M/yr office would be a <strong>6% to 300% management fee</strong> on a $1M&ndash;$50M net worth. That&rsquo;s absurd. The answer &mdash; and where the opportunity is &mdash; is to stop hiring people and start building <em>systems</em>.</p>
+
+  <div class="callout">
+    <strong>The mindset shift:</strong> your &ldquo;office&rdquo; isn&rsquo;t a place or a headcount. It&rsquo;s a <em>coordination layer</em> that sits between you and your assets. Software does what a junior analyst used to do. You buy specialist time by the hour.
+  </div>
+
+  <h3>Three-Tier Operating Model</h3>
+  <div class="tier-row">
+    <div class="tier">
+      <div class="range">$1M &ndash; $10M</div>
+      <div class="name">Hybrid Planner</div>
+      <p>Fee-only Registered Investment Advisor for portfolio. Best-of-breed outsourced CPA and estate attorney. Everything coordinated through a personal dashboard.</p>
+      <div class="budget"><strong>Budget:</strong> ~1% of net worth<br><strong>$5M example:</strong> $50k/yr</div>
+    </div>
+    <div class="tier">
+      <div class="range">$10M &ndash; $30M</div>
+      <div class="name">Virtual Family Office</div>
+      <p>Part-time Chief of Staff (or a VFO platform) orchestrating fully-outsourced specialists. Everyone is on your team; nobody is on payroll.</p>
+      <div class="budget"><strong>Budget:</strong> ~1% of net worth<br><strong>$25M example:</strong> $250k/yr</div>
+    </div>
+    <div class="tier">
+      <div class="range">$30M &ndash; $50M</div>
+      <div class="name">Lean SFO</div>
+      <p>One full-time Wealth Controller (analyst/CPA level, $150k&ndash;$200k). Runs the tech stack. Manages external high-cost partners. The Inflection Point.</p>
+      <div class="budget"><strong>Budget:</strong> ~1% of net worth<br><strong>$50M example:</strong> $500k/yr ($200k FTE + $300k partners &amp; tools)</div>
+    </div>
+  </div>
+
+  <h3>Interactive &mdash; The 1% TCO Rule</h3>
+  <p>Goldilocks zone for total cost of ownership across all four pillars is ~1% of net worth. Slide the net worth below to see what that actually means:</p>
+
+  <div class="calc">
+    <div class="calc-row">
+      <label for="nwRange">Net worth ($M)</label>
+      <input type="range" id="nwRange" min="1" max="50" step="1" value="15">
+      <div class="calc-val" id="nwVal">$15M</div>
+    </div>
+    <div class="calc-row">
+      <label for="tcoRange">Target TCO (%)</label>
+      <input type="range" id="tcoRange" min="0.5" max="1.5" step="0.05" value="1.0">
+      <div class="calc-val" id="tcoVal">1.00%</div>
+    </div>
+    <div class="calc-output">
+      <div class="stat">
+        <div class="label">Annual Budget</div>
+        <div class="value" id="annualBudget">$150k</div>
+        <div class="delta">Everything &mdash; tech, advisors, tax, legal</div>
+      </div>
+      <div class="stat">
+        <div class="label">Suggested Model</div>
+        <div class="value" id="suggestedModel" style="font-size: 18px;">VFO</div>
+        <div class="delta" id="modelHint">Virtual Family Office</div>
+      </div>
+      <div class="stat">
+        <div class="label">Max Advisor Spend (50% rule)</div>
+        <div class="value" id="advisorSpend">$75k</div>
+        <div class="delta">Rest: tech, insurance, structure</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The Five &ldquo;Departments&rdquo; of a VFO</h3>
+  <table>
+    <thead><tr><th>Department</th><th>Purpose</th><th>Key Artefact</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Treasury &amp; Investment</strong></td><td>How capital gets allocated across classes &amp; deals</td><td>Capital Allocation Policy (CAP) &mdash; the investment rulebook</td></tr>
+      <tr><td><strong>Tax &amp; Structural Engineering</strong></td><td>Shape the entity tree for tax alpha</td><td>Structural Map &mdash; trusts, LLCs, offshore entities</td></tr>
+      <tr><td><strong>Risk Management</strong></td><td>The defence department</td><td>Umbrella policies, cyber protocols, life insurance for estate tax</td></tr>
+      <tr><td><strong>Governance &amp; Education</strong></td><td>Family as a Board of Directors</td><td>Quarterly meeting cadence, decisions log, constitution</td></tr>
+      <tr><td><strong>Technology Stack</strong></td><td>The engine that runs it all</td><td>Aggregation (Addepar / Masttro), password mgr, hardware keys</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Four Pitfalls to Dodge</h3>
+  <div class="grid grid-2">
+    <div class="card"><span class="card-tag" style="color: var(--red); background: rgba(240,82,82,0.1);">Pitfall 1</span><h4>The Retail Trap</h4><p>Using a high-street bank&rsquo;s wealth management. They charge 1% for the portfolio but don&rsquo;t help with tax, estate, or governance. You pay family-office prices for a retail product.</p></div>
+    <div class="card"><span class="card-tag" style="color: var(--red); background: rgba(240,82,82,0.1);">Pitfall 2</span><h4>Complexity Creep</h4><p>Buying into 20 private equity funds at $10M NW. The K-1 tax forms and capital calls alone will ruin your weekends.</p></div>
+    <div class="card"><span class="card-tag" style="color: var(--red); background: rgba(240,82,82,0.1);">Pitfall 3</span><h4>Under-Insuring</h4><p>Enough to be sued, not enough to have a full-time legal team. Umbrella insurance is the cheapest family-office service money buys.</p></div>
+    <div class="card"><span class="card-tag" style="color: var(--red); background: rgba(240,82,82,0.1);">Pitfall 4</span><h4>The Preparer vs Strategist</h4><p>Hire a tax <em>strategist</em>, not a tax <em>preparer</em>. In this bracket your biggest expense is the government. Solve for tax efficiency first &mdash; it funds the rest of the model.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ TAB 5: LANDSCAPE ══════════════════════════ -->
+<section class="panel" id="panel-landscape">
+  <h2>2026 <span class="accent">Landscape</span> &amp; Role Players</h2>
+  <p class="sub">Who&rsquo;s in the market, doing what. Three layers: the commercial multi-family offices, the private-banking arms of legacy institutions, and the specialised software platforms that run the plumbing underneath.</p>
+
+  <h3>The Shift to &ldquo;Institutionalisation&rdquo;</h3>
+  <p>The 2026 theme is that family offices are behaving more like professional private-equity firms than gentlemen&rsquo;s investment clubs:</p>
+  <ul>
+    <li><strong>Massive push into AI infrastructure</strong> &mdash; data centres, compute, power generation</li>
+    <li><strong>Pivot toward private credit</strong> &mdash; stepping in where regional banks are retreating</li>
+    <li><strong>Direct investing over funds</strong> &mdash; buying companies outright for long-term value</li>
+    <li><strong>Thematic co-invest syndicates</strong> &mdash; sharing risk and diligence across families</li>
+    <li><strong>ESG integrated, not bolted on</strong> &mdash; a next-gen priority, not a PR layer</li>
+  </ul>
+
+  <h3>Headline MFOs &amp; Institutions (2026)</h3>
+  <table>
+    <thead><tr><th>Firm</th><th>Category</th><th>Scale / Assets</th><th>Known For</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Stanhope Capital / Corient</strong></td><td>Independent MFO</td><td>$430B, 500+ families</td><td>Post-merger 2025 (Stanhope + Stonehage Fleming + Corient). Global private markets.</td></tr>
+      <tr><td><strong>Rockefeller Capital Management</strong></td><td>Independent MFO</td><td>Large &mdash; undisclosed</td><td>Original SFO, now commercial. Deep family governance DNA.</td></tr>
+      <tr><td><strong>Bessemer Trust</strong></td><td>Independent MFO</td><td>~$200B, ~2,500 families</td><td>Trust &amp; estate specialists. Multi-generational wealth.</td></tr>
+      <tr><td><strong>1875 Finance</strong></td><td>European MFO</td><td>~$14.7B (Geneva)</td><td>Risk-optimised top-down asset allocation.</td></tr>
+      <tr><td><strong>J.P. Morgan Private Bank</strong></td><td>Institutional</td><td>Global</td><td>Often cited as the global leader. End-to-end UHNW services.</td></tr>
+      <tr><td><strong>Goldman Sachs PWM</strong></td><td>Institutional</td><td>Global</td><td>Institutional-grade PE / VC / direct deal flow.</td></tr>
+      <tr><td><strong>Schroders / Cazenove</strong></td><td>European Institutional</td><td>Global</td><td>Flexible menu including philanthropy &amp; impact.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Specialised Tech &amp; Operating Platforms</h3>
+  <div class="grid grid-3">
+    <div class="card">
+      <span class="card-tag">Platform</span>
+      <h4>Masttro</h4>
+      <p>Leading global platform for wealth mapping, AI document automation, multi-currency reporting across complex family trees.</p>
+      <p><strong>Fits:</strong> SFOs and large MFOs.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Platform</span>
+      <h4>Addepar</h4>
+      <p>Dominant software for performance reporting and visualisation, particularly for large alternatives portfolios (PE/HF).</p>
+      <p><strong>Fits:</strong> Institutional, ~$500M+.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Platform</span>
+      <h4>Asora</h4>
+      <p>&ldquo;Editor&rsquo;s Choice&rdquo; for mid-sized family offices. Automates data aggregation, reduces manual ops.</p>
+      <p><strong>Fits:</strong> $30M&ndash;$1B range &mdash; exactly the upper half of the forgotten middle.</p>
+    </div>
+  </div>
+
+  <h3>Notable Private Giants</h3>
+  <table>
+    <thead><tr><th>Office</th><th>Principal</th><th>Signature Bet</th></tr></thead>
+    <tbody>
+      <tr><td>Cascade Investment</td><td>Bill Gates</td><td>Diversified, long-duration public &amp; private</td></tr>
+      <tr><td>Bayshore Global</td><td>Sergey Brin</td><td>Tech-adjacent private deals</td></tr>
+      <tr><td>Emerson Collective</td><td>Laurene Powell Jobs</td><td>Impact &amp; media</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Research Worth Reading</h3>
+  <table>
+    <thead><tr><th>Source</th><th>Focus</th><th>Primary Takeaway</th></tr></thead>
+    <tbody>
+      <tr><td><strong>J.P. Morgan 2026 Global Family Office Report</strong></td><td>Investments &amp; operations</td><td>Inflation &amp; geopolitics are top risks. 65% prioritise AI.</td></tr>
+      <tr><td><strong>Wharton Global Family Alliance</strong></td><td>Governance &amp; structure</td><td>Stronger family constitutions correlate with higher returns.</td></tr>
+      <tr><td><strong>Deloitte Private Insights</strong></td><td>Market landscape</td><td>Family wealth projected +189% between 2019 and 2030.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══════════════════════════ TAB 6: OPPORTUNITIES ══════════════════════════ -->
+<section class="panel" id="panel-opportunities">
+  <h2>Where the <span class="accent">Opportunities</span> Are</h2>
+  <p class="sub">Two angles here. First, the <em>market</em> opportunities families are chasing as investors. Second, the <em>service gap</em> opportunities for someone who wants to actually help the forgotten middle run their wealth.</p>
+
+  <h3>1. Market Opportunities (what families are buying)</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <span class="card-tag">Trend</span>
+      <h4>Direct Investing</h4>
+      <p>Bypassing funds to invest directly in companies and real estate. Often co-investing with other families to share diligence cost and concentration risk. &ldquo;Strategic buyer&rdquo; behaviour &mdash; owning outright rather than chasing short-term IRR.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Trend</span>
+      <h4>Private Credit</h4>
+      <p>The regional banking retreat post-2023 created a lasting yield gap. Families are stepping in with structured credit, specialty finance, and direct lending.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Trend</span>
+      <h4>AI Infrastructure</h4>
+      <p>Data centres, power generation, compute leasing. The 2026 version of &ldquo;picks and shovels&rdquo; &mdash ; capturing AI&rsquo;s CAPEX build-out without betting on a model.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Trend</span>
+      <h4>Integrated Impact / ESG</h4>
+      <p>Maturing beyond &ldquo;concessionary&rdquo; philanthropy. Commercial capital and mission aligned inside a single legacy strategy. A next-gen prerequisite, not a branding exercise.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Trend</span>
+      <h4>Thematic Syndicates</h4>
+      <p>Small groups of families pooling capital and expertise around specific sectors (healthcare services, industrial automation, business software). Reduces information asymmetry.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Trend</span>
+      <h4>Disciplined Underwriting</h4>
+      <p>Away from &ldquo;thematic noise&rdquo;, toward durable-demand sectors. The adult-in-the-room money is slowing down and being more selective.</p>
+    </div>
+  </div>
+
+  <h3>2. Service-Gap Opportunities (the software play)</h3>
+  <p>The big names &mdash; Addepar, Masttro &mdash; are priced and scoped for the $500M+ tier. <strong>Asora</strong> serves the $30M&ndash;$1B band. That leaves a gap below $30M where clients are either using spreadsheets, a retail bank, or nothing at all. This is the sweet spot for a <em>coordinator-plus-dashboards</em> model.</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h4>Gap 1: Sub-$30M Aggregation</h4>
+      <p>No affordable equivalent of Addepar for the $5M&ndash;$30M bracket. Spreadsheet hell is the status quo.</p>
+      <ul>
+        <li>Statement ingestion + consolidation</li>
+        <li>Cross-entity, cross-currency reporting</li>
+        <li>One pane of glass</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Gap 2: Tax-Alpha Tracking</h4>
+      <p>No lightweight tool specifically tracks the <em>dollar value</em> of structural and timing decisions for a family.</p>
+      <ul>
+        <li>Strategy register with $ impact</li>
+        <li>Year-on-year tax-alpha capture</li>
+        <li>Structural map that CPAs can consume</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Gap 3: Governance Cadence</h4>
+      <p>Family meetings run on goodwill and Outlook invites. There&rsquo;s no lightweight platform that holds agendas, decisions, actions, and constitution amendments in one place.</p>
+      <ul>
+        <li>Quarterly agenda templates</li>
+        <li>Decisions &amp; actions register</li>
+        <li>Next-gen education modules</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Gap 4: Document &amp; Entity Register</h4>
+      <p>Docs are scattered across Gmail, Dropbox, lawyer portals, bank portals. Finding a five-year-old trust deed is a Friday afternoon.</p>
+      <ul>
+        <li>Unified document vault (connector-backed)</li>
+        <li>Entity tree with beneficial ownership</li>
+        <li>Version history and change log</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Gap 5: Risk Register</h4>
+      <p>Most families track insurance in a drawer. Cyber, key-man, and family-conflict risk has no owner.</p>
+      <ul>
+        <li>Policy register with renewal dates</li>
+        <li>Cyber checklist &amp; attestation</li>
+        <li>Key-man coverage analysis</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Gap 6: Deal &amp; Due-Diligence Pipeline</h4>
+      <p>Direct-deal opportunities arrive by email. No CRM. No diligence checklist. Decisions based on gut.</p>
+      <ul>
+        <li>Kanban: Sourced &rarr; Diligence &rarr; IC &rarr; Invested &rarr; Passed</li>
+        <li>Diligence checklist per stage</li>
+        <li>Investment thesis archive</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>The thesis:</strong> for a VFO in the $5M&ndash;$30M bracket, the difference between &ldquo;chaotic&rdquo; and &ldquo;professional&rdquo; is almost entirely operational &mdash; <em>not</em> investment performance. That&rsquo;s a software problem, not a people problem. Which is exactly what the next tab is about.
+  </div>
+</section>
+
+<!-- ══════════════════════════ TAB 7: WHAT WE CAN BUILD ══════════════════════════ -->
+<section class="panel" id="panel-build">
+  <h2>What We Can Build in <span class="accent">Claude Cowork / Claude Code</span></h2>
+  <p class="sub">Grounded in what this platform actually does &mdash; not marketing fluff. Cowork handles HTML dashboards, spreadsheets, documents, and plumbs into Gmail / Drive / Dropbox / custom MCP connectors. Claude Code handles the heavier backend lifting: integration scripts, custom MCPs for brokerages or accounting systems, scheduled jobs. Together they cover the full VFO tech stack for the forgotten middle.</p>
+
+  <div class="callout note">
+    <strong>Inference flag.</strong> <span class="inference">Inference</span> tags below mark items where the capability exists in principle but would require per-client scoping and &mdash; for some integrations &mdash; a custom MCP build. No hand-wavy promises.
+  </div>
+
+  <h3>Core Module Set &mdash; The VFO Tech Stack</h3>
+  <div class="grid grid-2">
+
+    <div class="build-card">
+      <div class="bc-head"><h4>1 &middot; Wealth Aggregation Dashboard</h4><span class="effort pill-green">MVP: 2&ndash;3 weeks</span></div>
+      <div class="body">Single pane of glass across bank accounts, brokerage, real estate, private holdings. Ingest monthly statements (PDF or CSV) and render consolidated asset allocation, liquidity, concentration, and monthly net-worth trend. Mirrors the Addepar/Masttro concept at a fraction of the cost.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">PDF/CSV statements, manual entries for private holdings, real-estate valuations</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Gmail MCP (statement scraping), Dropbox/Drive MCP (statement vault) <span class="inference">inference &mdash; brokerage direct APIs depend on jurisdiction</span></span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML dashboard + backing spreadsheet; refresh monthly</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>2 &middot; Capital Allocation Policy Tracker</h4><span class="effort pill-green">MVP: 1&ndash;2 weeks</span></div>
+      <div class="body">The CAP is the family&rsquo;s investment rulebook &mdash; target weights by asset class, drift bands, rebalancing triggers. This tool holds the policy, compares actual to target, and flags when you&rsquo;re out of bounds.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">CAP document (weights, bands, triggers), current portfolio from Module 1</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Reads from Module 1 state</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML dashboard + alerting via email when drift band breached</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>3 &middot; Structural / Entity Map</h4><span class="effort pill-amber">MVP: 2&ndash;4 weeks</span></div>
+      <div class="body">Visual tree of all entities &mdash; trusts, LLCs, holding companies, operating companies, offshore vehicles. Each node links to formation docs, beneficial ownership, tax status, annual obligations. The answer to &ldquo;where is that?&rdquo; at 11pm on a Sunday.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Entity list, ownership percentages, doc repository</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Dropbox/Drive/Box MCP for doc linking</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML dashboard with interactive D3 org chart + doc vault hooks</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>4 &middot; Tax-Alpha Register</h4><span class="effort pill-green">MVP: 1&ndash;2 weeks</span></div>
+      <div class="body">Every tax move &mdash; loss harvesting, entity restructure, charitable timing, Roth conversions &mdash; logged with the $ value captured. Rolls up year-on-year. Gives the family the satisfying answer to &ldquo;what did my CPA actually save me this year?&rdquo;</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Strategy log, marginal-rate assumptions, CPA memo archive</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Gmail MCP (ingest CPA memos)</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">Excel workbook + HTML dashboard</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>5 &middot; Deal &amp; Due-Diligence Pipeline</h4><span class="effort pill-green">MVP: 1&ndash;2 weeks</span></div>
+      <div class="body">Kanban for direct deals: Sourced &rarr; Diligence &rarr; IC &rarr; Invested &rarr; Passed. Each card holds thesis, diligence checklist, cap-table data, references. Prevents the &ldquo;three-deals-in-the-inbox&rdquo; decision paralysis.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Deal pipeline, diligence templates by deal type</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Gmail MCP for deck attachment ingest</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML kanban tool + exportable IC memo generator</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>6 &middot; Document Vault &amp; Search</h4><span class="effort pill-green">MVP: 1 week</span></div>
+      <div class="body">Backed by the family&rsquo;s existing Drive / Dropbox / Box / Gmail. Claude searches across them, summarises, and surfaces the five-year-old trust deed in ten seconds. Doesn&rsquo;t move docs &mdash; just indexes and queries.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Existing cloud storage, Gmail history</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Drive, Dropbox, Box, Gmail MCPs</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">Chat-based search + HTML document index</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>7 &middot; Quarterly Family Meeting Kit</h4><span class="effort pill-green">MVP: 1 week</span></div>
+      <div class="body">Agenda template, action-items register carried forward, decisions log, minutes generator from Teams/Zoom transcripts (we have a proven minutes skill already). The governance cadence in a box.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Meeting transcript, running decisions log</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Calendar MCP, minutes-generation skill already in the stack</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML dashboard + Word doc minutes output</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>8 &middot; Risk &amp; Insurance Register</h4><span class="effort pill-green">MVP: 1 week</span></div>
+      <div class="body">Every policy &mdash; umbrella, D&amp;O, cyber, life, property, art, aviation &mdash; logged with limits, deductibles, insurer, renewal date. Automatic renewal alerts 60/30/7 days out. Coverage-gap traffic-light.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Policy docs, schedule of covered assets</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Calendar MCP for renewals; Gmail MCP for broker correspondence</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML register + scheduled renewal email</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>9 &middot; Bill Pay / Cash Flow Calendar</h4><span class="effort pill-amber">MVP: 2 weeks</span></div>
+      <div class="body">Recurring obligations &mdash; property tax, payroll, quarterly estimates, trust distributions, capital calls &mdash; on a calendar view with cash-in-hand forecast. Avoids the Friday-afternoon capital-call scramble.</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Recurring obligations schedule, cash balances</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Banking connectors <span class="inference">inference &mdash; depends on bank API availability</span></span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML calendar + 13-week cash forecast</span></div>
+      </div>
+    </div>
+
+    <div class="build-card">
+      <div class="bc-head"><h4>10 &middot; Philanthropy Tracker</h4><span class="effort pill-green">MVP: 1 week</span></div>
+      <div class="body">Donation log, grant pipeline, impact metrics per cause, donor-advised-fund balance, tax-receipt archive. Especially useful if impact is supposed to be integrated (not concessionary).</div>
+      <div class="meta">
+        <div class="mrow"><span class="mlabel">Inputs</span><span class="mval">Giving log, DAF statements, grantee reports</span></div>
+        <div class="mrow"><span class="mlabel">Integrations</span><span class="mval">Drive MCP for tax receipts</span></div>
+        <div class="mrow"><span class="mlabel">Delivery</span><span class="mval">HTML dashboard + annual giving report</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3>Proposed 90-Day MVP Roadmap</h3>
+  <table>
+    <thead><tr><th>Phase</th><th>Duration</th><th>Modules Delivered</th><th>Outcome</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 1 &mdash; Foundations</strong> <span class="pill pill-gold">Weeks 1&ndash;4</span></td>
+        <td>4 weeks</td>
+        <td>Module 1 (Aggregation), Module 2 (CAP), Module 6 (Doc Vault)</td>
+        <td>One consolidated view + policy + searchable docs. The &ldquo;I can find my stuff and see what I have&rdquo; layer.</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2 &mdash; Structure &amp; Tax</strong> <span class="pill pill-gold">Weeks 5&ndash;8</span></td>
+        <td>4 weeks</td>
+        <td>Module 3 (Entity Map), Module 4 (Tax-Alpha Register), Module 8 (Risk Register)</td>
+        <td>The quiet value layer &mdash; tax efficiency, defensive structure, insurance coverage.</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3 &mdash; Operate &amp; Govern</strong> <span class="pill pill-gold">Weeks 9&ndash;13</span></td>
+        <td>5 weeks</td>
+        <td>Module 5 (Deal Pipeline), Module 7 (Family Meetings), Module 9 (Cash Flow), Module 10 (Philanthropy)</td>
+        <td>The operating cadence layer &mdash; governance, deal discipline, cash hygiene, giving.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Cost Comparison &mdash; What This Replaces</h3>
+  <table>
+    <thead><tr><th></th><th>Off-the-Shelf (Addepar / Masttro)</th><th>Cowork-Built VFO Stack</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Typical licence cost</strong></td><td>$50k&ndash;$200k/yr platform</td><td>Build cost + Cowork subscription &mdash; low five-figures<span class="inference">inference</span></td></tr>
+      <tr><td><strong>Implementation time</strong></td><td>3&ndash;6 months</td><td>90 days for the full 10-module stack</td></tr>
+      <tr><td><strong>Minimum AUM fit</strong></td><td>$30M&ndash;$500M+</td><td>$5M&ndash;$50M (the forgotten middle)</td></tr>
+      <tr><td><strong>Customisation</strong></td><td>Limited to vendor roadmap</td><td>Owner-controlled &mdash; anything you can describe</td></tr>
+      <tr><td><strong>Data residency</strong></td><td>Vendor cloud</td><td>Local workspace + user-chosen connectors</td></tr>
+      <tr><td><strong>Replaces</strong></td><td>Aggregation + reporting only</td><td>Aggregation, tax register, governance, deals, risk, cash flow, philanthropy</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>The pitch in one line:</strong> for a family in the forgotten middle, the Cowork-built VFO stack delivers the professionalisation Addepar offers at $500M, scoped and priced for someone with $5M&ndash;$50M. Built in 90 days. Owned by the family. Not a platform subscription &mdash; a platform you operate.
+  </div>
+
+  <h3>What This Page Itself Is</h3>
+  <p>Meta point &mdash; worth naming: this HTML is itself a small example of what Cowork builds in a conversation. Content from two emails, cross-referenced, laid out in a sticky-tab dark-theme dashboard, running offline on a single file. Took about 15 minutes of conversation. The fact that it exists is part of the sell.</p>
+</section>
+
+<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+<footer>
+  <div>
+    Sources: Hein du Toit emails (23 April 2026) &middot; JPM 2026 Global Family Office Report &middot; Deloitte Private Insights &middot; Wharton Global Family Alliance &middot; networth.pro <br>
+    Inference items marked <span class="inference">inference</span> inline.
+  </div>
+  <div>Built in Claude Cowork &middot; April 2026</div>
+</footer>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // TCO calculator
+  const nwRange = document.getElementById('nwRange');
+  const tcoRange = document.getElementById('tcoRange');
+  const nwVal = document.getElementById('nwVal');
+  const tcoVal = document.getElementById('tcoVal');
+  const annualBudget = document.getElementById('annualBudget');
+  const suggestedModel = document.getElementById('suggestedModel');
+  const modelHint = document.getElementById('modelHint');
+  const advisorSpend = document.getElementById('advisorSpend');
+
+  function fmtMoney(n) {
+    if (n >= 1e6) return '$' + (n/1e6).toFixed(n >= 10e6 ? 0 : 1) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n/1e3) + 'k';
+    return '$' + Math.round(n);
+  }
+
+  function updateCalc() {
+    const nw = parseFloat(nwRange.value) * 1e6;
+    const tco = parseFloat(tcoRange.value) / 100;
+    const budget = nw * tco;
+    nwVal.textContent = '$' + nwRange.value + 'M';
+    tcoVal.textContent = parseFloat(tcoRange.value).toFixed(2) + '%';
+    annualBudget.textContent = fmtMoney(budget);
+    advisorSpend.textContent = fmtMoney(budget * 0.5);
+    const nwM = parseFloat(nwRange.value);
+    let model, hint;
+    if (nwM <= 10)      { model = 'Hybrid'; hint = 'Hybrid Planner &mdash; RIA + software'; }
+    else if (nwM <= 30) { model = 'VFO';    hint = 'Virtual Family Office &mdash; part-time Chief of Staff'; }
+    else                { model = 'Lean SFO'; hint = 'One Wealth Controller + outsourced partners'; }
+    suggestedModel.textContent = model;
+    modelHint.innerHTML = hint;
+  }
+  nwRange.addEventListener('input', updateCalc);
+  tcoRange.addEventListener('input', updateCalc);
+  updateCalc();
+</script>
+
+</body>
+</html>

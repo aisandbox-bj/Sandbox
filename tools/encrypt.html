@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Sandbox — Encrypt Dashboard</title>
+<style>
+  :root {
+    --bg-base: #0f1117;
+    --bg-surface: #1a1f2e;
+    --bg-raised: #232a3b;
+    --bg-deep: #141820;
+    --border-base: #2a3347;
+    --border-strong: #3a4457;
+    --border-subtle: #1e2535;
+    --text-primary: #e6eaf2;
+    --text-secondary: #c0cadb;
+    --text-muted: #8a9ab5;
+    --text-faint: #5a6a85;
+    --gold: #D6A70C;
+    --gold-soft: #c0a840;
+    --green: #34c97a;
+    --amber: #f0b429;
+    --red: #f05252;
+    --blue: #5b9cf6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(180deg, #141820 0%, #1a1f2e 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 22px 40px 20px;
+  }
+  header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  header h1 .gold { color: var(--gold); }
+  header p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  main {
+    max-width: 760px; margin: 0 auto;
+    padding: 32px 32px 60px;
+  }
+
+  .callout {
+    background: var(--bg-deep);
+    border-left: 3px solid var(--blue);
+    padding: 14px 18px; margin-bottom: 24px;
+    border-radius: 0 6px 6px 0;
+    color: var(--text-secondary); font-size: 13px;
+  }
+  .callout strong { color: var(--blue); }
+
+  .panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-base);
+    border-radius: 10px;
+    padding: 24px 26px;
+    margin-bottom: 22px;
+  }
+  .panel h2 {
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-base);
+  }
+
+  /* DROPZONE */
+  .dropzone {
+    border: 2px dashed var(--border-base);
+    border-radius: 8px;
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .dropzone:hover, .dropzone.drag {
+    border-color: var(--gold);
+    background: rgba(214,167,12,0.04);
+    color: var(--text-primary);
+  }
+  .dropzone strong { color: var(--gold); }
+  .dropzone .small { font-size: 12px; color: var(--text-faint); margin-top: 6px; }
+
+  .file-list { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .file-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .file-row .name { color: var(--text-primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 12px; }
+  .file-row .meta { color: var(--text-faint); font-size: 11px; }
+  .file-row .remove {
+    background: transparent; border: none; color: var(--text-faint);
+    cursor: pointer; font-size: 14px; padding: 4px 8px;
+  }
+  .file-row .remove:hover { color: var(--red); }
+
+  /* INPUTS */
+  label.field-label {
+    display: block; font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  input[type="password"] {
+    width: 100%;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-base);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  input[type="password"]:focus { outline: none; border-color: var(--gold); }
+
+  .field { margin-bottom: 14px; }
+
+  /* STRENGTH BAR */
+  .strength {
+    margin-top: 8px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px;
+  }
+  .strength .bar {
+    flex: 1; height: 6px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px; overflow: hidden;
+  }
+  .strength .bar > div {
+    height: 100%; width: 0; transition: width 0.2s, background 0.2s;
+  }
+  .strength .label { min-width: 90px; text-align: right; color: var(--text-muted); font-weight: 700; }
+  .checks { margin-top: 8px; font-size: 11px; color: var(--text-faint); }
+  .checks span { margin-right: 12px; }
+  .checks span.ok { color: var(--green); }
+  .checks span.bad { color: var(--text-faint); }
+
+  /* BUTTONS */
+  .btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+  .btn {
+    background: var(--bg-raised);
+    color: var(--text-primary);
+    border: 1px solid var(--border-base);
+    border-radius: 6px;
+    padding: 10px 18px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--border-strong); }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg-base);
+    border-color: var(--gold);
+  }
+  .btn-primary:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+  .btn-primary:disabled {
+    background: var(--bg-raised); color: var(--text-faint);
+    border-color: var(--border-base);
+    cursor: not-allowed;
+  }
+
+  /* RESULTS */
+  .result {
+    margin-top: 14px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .result.success { border-left: 3px solid var(--green); }
+  .result.error   { border-left: 3px solid var(--red); }
+  .result h3 {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .result.success h3 { color: var(--green); }
+  .result.error h3   { color: var(--red); }
+  .result p { color: var(--text-secondary); font-size: 12px; }
+  .result .files { margin-top: 8px; font-family: ui-monospace,Consolas,monospace; font-size: 12px; color: var(--text-primary); }
+  .result .files div { padding: 2px 0; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 18px 20px;
+    font-size: 11px;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: rgba(214,167,12,0.15); color: var(--gold);
+    border: 1px solid rgba(214,167,12,0.3);
+    margin-left: 8px; vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="gold">Sandbox</span> — Encrypt Dashboard <span class="pill">Local tool</span></h1>
+  <p>Wraps an HTML dashboard in AES-GCM encryption so it can sit safely on a public GitHub Pages site.</p>
+</header>
+
+<main>
+
+  <div class="callout">
+    <strong>How this works.</strong> Pick one or more <code>.html</code> files, set a passphrase (12+ chars), and click Encrypt. Each file becomes a <code>.enc.json</code> envelope you can drop into <code>/private/</code> on the repo. The tool runs entirely in your browser — nothing is uploaded.
+  </div>
+
+  <section class="panel">
+    <h2>1. Pick dashboard file(s)</h2>
+    <div class="dropzone" id="dropzone" tabindex="0" role="button">
+      <strong>Drop .html files here</strong> or click to choose
+      <div class="small">Multiple files = batch encrypt with the same passphrase (use this for passphrase rotation).</div>
+      <input type="file" id="file-input" accept=".html,text/html" multiple style="display:none">
+    </div>
+    <div id="file-list" class="file-list"></div>
+  </section>
+
+  <section class="panel">
+    <h2>2. Set passphrase</h2>
+    <div class="field">
+      <label class="field-label" for="pass1">Passphrase</label>
+      <input type="password" id="pass1" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <div class="strength">
+        <div class="bar"><div id="strength-fill"></div></div>
+        <div class="label" id="strength-label">—</div>
+      </div>
+      <div class="checks" id="checks">
+        <span id="ck-len" class="bad">▢ 12+ chars</span>
+        <span id="ck-low" class="bad">▢ lower</span>
+        <span id="ck-up"  class="bad">▢ UPPER</span>
+        <span id="ck-num" class="bad">▢ digit</span>
+        <span id="ck-sym" class="bad">▢ symbol</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="pass2">Confirm passphrase</label>
+      <input type="password" id="pass2" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <div class="checks"><span id="ck-match" class="bad">▢ matches</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>3. Encrypt</h2>
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:8px;">PBKDF2-SHA256 · 600,000 iterations · AES-GCM 256. Encryption may take a couple seconds per file.</p>
+    <div class="btn-row">
+      <button type="button" class="btn" id="btn-clear">Clear all</button>
+      <button type="button" class="btn btn-primary" id="btn-encrypt" disabled>Encrypt &amp; download</button>
+    </div>
+    <div id="result"></div>
+  </section>
+
+</main>
+
+<footer>Runs locally · No network calls · No data leaves your browser</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  const ITERATIONS = 600000;
+
+  // ---------- DOM refs ----------
+  const dropzone   = document.getElementById('dropzone');
+  const fileInput  = document.getElementById('file-input');
+  const fileList   = document.getElementById('file-list');
+  const pass1      = document.getElementById('pass1');
+  const pass2      = document.getElementById('pass2');
+  const strengthFill  = document.getElementById('strength-fill');
+  const strengthLabel = document.getElementById('strength-label');
+  const ckLen   = document.getElementById('ck-len');
+  const ckLow   = document.getElementById('ck-low');
+  const ckUp    = document.getElementById('ck-up');
+  const ckNum   = document.getElementById('ck-num');
+  const ckSym   = document.getElementById('ck-sym');
+  const ckMatch = document.getElementById('ck-match');
+  const btnEncrypt = document.getElementById('btn-encrypt');
+  const btnClear   = document.getElementById('btn-clear');
+  const resultBox  = document.getElementById('result');
+
+  // ---------- File staging ----------
+  let files = []; // [{ name, text }]
+
+  function fmtBytes(n) {
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+    return (n / (1024 * 1024)).toFixed(2) + ' MB';
+  }
+
+  function renderFiles() {
+    fileList.innerHTML = '';
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      const row = document.createElement('div');
+      row.className = 'file-row';
+      const name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = f.name;
+      const meta = document.createElement('span');
+      meta.className = 'meta';
+      meta.textContent = fmtBytes(new Blob([f.text]).size);
+      const rm = document.createElement('button');
+      rm.className = 'remove';
+      rm.type = 'button';
+      rm.textContent = '✕';
+      rm.title = 'Remove';
+      rm.addEventListener('click', () => { files.splice(i, 1); renderFiles(); refreshButton(); });
+      row.appendChild(name);
+      row.appendChild(meta);
+      row.appendChild(rm);
+      fileList.appendChild(row);
+    }
+    refreshButton();
+  }
+
+  async function addFiles(fileObjs) {
+    const lst = Array.from(fileObjs).filter(f => /\.html?$/i.test(f.name));
+    if (lst.length === 0) return;
+    for (const f of lst) {
+      const text = await f.text();
+      files.push({ name: f.name, text });
+    }
+    renderFiles();
+  }
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+  fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+  ['dragenter','dragover'].forEach(ev => dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+  dropzone.addEventListener('drop', (e) => { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+
+  // ---------- Passphrase strength ----------
+  function evalPass() {
+    const v = pass1.value;
+    const len = v.length >= 12;
+    const low = /[a-z]/.test(v);
+    const up  = /[A-Z]/.test(v);
+    const num = /[0-9]/.test(v);
+    const sym = /[^A-Za-z0-9]/.test(v);
+    const classes = [low, up, num, sym].filter(Boolean).length;
+
+    setCheck(ckLen, len, '12+ chars');
+    setCheck(ckLow, low, 'lower');
+    setCheck(ckUp,  up,  'UPPER');
+    setCheck(ckNum, num, 'digit');
+    setCheck(ckSym, sym, 'symbol');
+
+    // score: length-driven, classes for bonus
+    let score = 0;
+    if (v.length >= 8) score += 20;
+    if (v.length >= 12) score += 25;
+    if (v.length >= 16) score += 20;
+    if (v.length >= 20) score += 15;
+    score += classes * 5;
+    score = Math.min(score, 100);
+
+    let color = 'var(--red)';
+    let label = 'Too weak';
+    if (score >= 30) { color = 'var(--amber)'; label = 'Weak'; }
+    if (score >= 55) { color = 'var(--blue)'; label = 'OK'; }
+    if (score >= 75) { color = 'var(--green)'; label = 'Strong'; }
+    if (score >= 90) { color = 'var(--gold)'; label = 'Excellent'; }
+    if (v.length === 0) { color = 'var(--border-subtle)'; label = '—'; score = 0; }
+
+    strengthFill.style.width = score + '%';
+    strengthFill.style.background = color;
+    strengthLabel.textContent = label;
+    strengthLabel.style.color = color;
+
+    const meets = len && classes >= 2;
+    const match = pass2.value.length > 0 && pass1.value === pass2.value;
+    setCheck(ckMatch, match, 'matches');
+
+    refreshButton(meets, match);
+    return { meets, match };
+  }
+  function setCheck(node, ok, txt) {
+    node.className = ok ? 'ok' : 'bad';
+    node.textContent = (ok ? '✓ ' : '▢ ') + txt;
+  }
+  pass1.addEventListener('input', evalPass);
+  pass2.addEventListener('input', evalPass);
+
+  function refreshButton(meetsArg, matchArg) {
+    const r = (meetsArg === undefined) ? evalState() : { meets: meetsArg, match: matchArg };
+    btnEncrypt.disabled = !(r.meets && r.match && files.length > 0);
+  }
+  function evalState() {
+    const v = pass1.value;
+    const len = v.length >= 12;
+    const classes = ['[a-z]','[A-Z]','[0-9]','[^A-Za-z0-9]'].filter(re => new RegExp(re).test(v)).length;
+    const meets = len && classes >= 2;
+    const match = pass2.value.length > 0 && pass1.value === pass2.value;
+    return { meets, match };
+  }
+
+  btnClear.addEventListener('click', () => {
+    files = [];
+    pass1.value = '';
+    pass2.value = '';
+    resultBox.innerHTML = '';
+    renderFiles();
+    evalPass();
+  });
+
+  // ---------- Crypto ----------
+  function bytesToB64(bytes) {
+    let s = '';
+    const view = new Uint8Array(bytes);
+    for (let i = 0; i < view.length; i++) s += String.fromCharCode(view[i]);
+    return btoa(s);
+  }
+
+  async function deriveKey(passphrase, saltBytes) {
+    const baseKey = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(passphrase),
+      { name: 'PBKDF2' }, false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: saltBytes, iterations: ITERATIONS, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt']
+    );
+  }
+
+  async function encryptOne(htmlText, passphrase) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv   = crypto.getRandomValues(new Uint8Array(12));
+    const key  = await deriveKey(passphrase, salt);
+    const ct   = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv },
+      key,
+      new TextEncoder().encode(htmlText)
+    );
+    return {
+      v: 1,
+      app: 'sandbox-launcher',
+      alg: 'AES-GCM',
+      kdf: 'PBKDF2-SHA256',
+      iterations: ITERATIONS,
+      salt: bytesToB64(salt),
+      iv: bytesToB64(iv),
+      ciphertext: bytesToB64(ct)
+    };
+  }
+
+  function downloadJson(obj, filename) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  }
+
+  function deriveOutName(htmlName) {
+    const base = htmlName.replace(/\.html?$/i, '');
+    return base + '.enc.json';
+  }
+
+  // ---------- Encrypt button ----------
+  btnEncrypt.addEventListener('click', async () => {
+    const r = evalState();
+    if (!r.meets || !r.match || files.length === 0) return;
+    btnEncrypt.disabled = true;
+    btnEncrypt.textContent = 'Encrypting…';
+    resultBox.innerHTML = '';
+    const produced = [];
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        btnEncrypt.textContent = `Encrypting ${i + 1}/${files.length}…`;
+        const env = await encryptOne(f.text, pass1.value);
+        const outName = deriveOutName(f.name);
+        downloadJson(env, outName);
+        produced.push(outName);
+        // Small delay so the browser doesn't suppress multi-download
+        if (i < files.length - 1) await new Promise(r => setTimeout(r, 300));
+      }
+      const box = document.createElement('div');
+      box.className = 'result success';
+      box.innerHTML = '<h3>Done</h3><p>Encrypted ' + produced.length + ' file(s). Move them to <code>/private/</code> on the repo and add an entry in the launcher\'s <code>DASHBOARDS</code> array.</p>';
+      const filesDiv = document.createElement('div');
+      filesDiv.className = 'files';
+      for (const n of produced) {
+        const d = document.createElement('div');
+        d.textContent = '• ' + n;
+        filesDiv.appendChild(d);
+      }
+      box.appendChild(filesDiv);
+      resultBox.appendChild(box);
+    } catch (err) {
+      const box = document.createElement('div');
+      box.className = 'result error';
+      box.innerHTML = '<h3>Failed</h3><p>' + (err && err.message ? err.message : 'Unknown error') + '</p>';
+      resultBox.appendChild(box);
+    } finally {
+      btnEncrypt.textContent = 'Encrypt & download';
+      refreshButton();
+    }
+  });
+
+  // ---------- Init ----------
+  evalPass();
+})();
+</script>
+
+</body>
+</html>
